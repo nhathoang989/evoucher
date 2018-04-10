@@ -22,7 +22,12 @@ namespace EVoucher.Lib
         }
         public static async Task<string> SendMessage(string phone, string code)
         {
-            string message = $"Bridgestone Việt Nam \r\nMã ưu đãi: {code}\r\nMã ưu đãi có giá trị giảm 300 nghìn đồng trên phí dịch vụ khi mua 02 lốp Turanza GR100 tại hệ thống B - select, B - shop của Bridgestone trên cả nước. \r\nHieu luc tu 15 den 30/04/2018\r\nHotline: 1900 54 54 68";
+            string message = $"Bridgestone Việt Nam \r\nQuy khach vua dang ki chuong trinh Khuyen mai cua Bridgestone.\r\nMã ưu đãi: {code}\r\n";
+            message += "Co gia tri giam 300 nghin dong tren phi dich vu khi mua 02 lop Turanza GR100 tai he thong B-select, B-shop cua Bridgestone tren ca nuoc.\r\n";
+            message += "Ma uu dai co Hieu luc tu 15/04 den 30/04/2018\r\n";
+            message += "De biet them chi tiet quy khach vui long goi den hotline: 1900 54 54 68 de biet them chi tiet.\r\n";
+            message += "Xin cam on.";
+
             string account = "Bridgestonevn";
             string passcode = "tvk2m";
             string serviceId = "Bridgestone";

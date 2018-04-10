@@ -1,0 +1,257 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Claim";
+}
+<div class="row" ng-controller="registerController" ng-init="openSearch();">
+    <div class="loader-container" ng-show="isBusy">
+        <div id="loader"></div>
+    </div>
+
+    <div class="row">
+        <h2>Mã ưu đãi</h2>
+        <div class="col-lg-5">
+            <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+               ng-click="openSearch()" class="btn btn-info btn-sm">
+                Tìm kiếm
+            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                   ng-click="exportRegisters()" id="btn-search" class="btn btn-warning btn-sm">
+                    Export
+                </a>
+                <a href="{{downloadLink}}" class="btn btn-sm btn-success" ng-show="downloadLink!=''">Tải xuống</a>
+            }
+        </div>
+        <div class="col-lg-7">
+            <div class="alert alert-success" style="display:none;" id="message">
+                <strong>Well done!</strong> You successfully update register
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Nhà sản xuất</th>
+                        <th>Nhãn hiệu</th>
+                        <th>Đời xe</th>
+                        <th>Biển số</th>
+                        <th>Mã ưu đãi</th>
+                        <th>SMS Status</th>
+                        <th>Ngày tạo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="register in data.items">
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
+                            <span>{{register.fullname}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
+                            <span>{{register.phone}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
+                            <span>{{register.manufacturer}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
+                            <span>{{register.automaker}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
+                            <span>{{register.carModel}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
+                            <span>{{register.license}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
+                            <span>{{register.code}}</span>
+                        </td>
+                        <td>
+                            <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
+                            <span>{{register.sendCodeStatus}}</span>
+                        </td>
+                        <td>
+                            <span>
+                                {{register.createdDate| utcToLocal:'dd.MM.yyyy - hh:mm:ss a'}}
+                            </span>
+                        </td>
+                        <td>
+
+                            <a href="javascript:void(0)" class="btn btn-xs btn-info" ng-click="loadRegister(register)">Cập nhật</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button type="button" class="btn btn-xs btn-danger" ng-click="removeRegister(register)">Xóa</button>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="text-center">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link active" href="javascript:void(0)" ng-click="loadRegisters(data.pageIndex-1)" ng-hide="data.pageIndex==0">Trang trước</a></li>
+            <li class="page-item" ng-class="{active: n-1==data.pageIndex}" ng-repeat="n in range(data.totalPage)"><a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(n-1)">{{n}}</a></li>
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0)"
+                   ng-click="loadRegisters(data.pageIndex + 1)" ng-hide="data.pageIndex >= (data.totalPage-1)">Trang sau</a>
+            </li>
+        </ul>
+        <!--<ul class="pagination">
+            <li class="page-item"><a class="page-link active" href="javascript:void(0)" ng-click="loadRegisters(paging.pageIndex-1)" ng-hide="paging.pageIndex==0">Previous</a></li>
+            <li class="page-item" ng-class="{active: n-1==paging.pageIndex}" ng-repeat="n in range(paging.totalPage)"><a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(n-1)">{{n}}</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(paging.pageIndex + 1)" ng-hide="paging.pageIndex >= (paging.totalPage-1)">Next</a></li>
+        </ul>-->
+    </div>
+
+    <div class="modal fade" id="dlg-search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="search-form"
+                      ng-class="{'submitted': submitted}"
+                      ng-submit="loadRegisters(0)">
+                    <div class="modal-header">
+                        <h3>Tìm kiếm</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>Nhập mã ưu đãi</p>
+                        <input type="text" class="form-control" ng-enter="loadRegisters(0)" ng-model="request.key" name="key" />
+                        <p>Hoặc nhập số điện thoại</p>
+                        <input type="text" class="form-control" pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
+                               ng-model="request.keyword" id="keyword" name="keyword" />
+                        <p class="text-danger">(Số điện thoại ghi liền không cách nhau)</p>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span>From Date</span>
+                            <input type="date" ng-model="dateRange.fromDate" class="form-control" name="fromDate" />
+                            <span>To Date</span>
+                            <input type="date" ng-model="dateRange.toDate" class="form-control" name="toDate" />
+                            <p>Trạng thái</p>
+                            <select ng-model="request.isClaimed" class="form-control" name="pageSize">
+                                <option value="null">Chưa đổi</option>
+                                <option value="1">Đổi 1</option>
+                                <option value="2">Đã đổi</option>
+                            </select>
+                            <p>Page Size</p>
+                            <select ng-model="request.pageSize" class="form-control" name="pageSize">
+                                <option value="null">All</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+
+                        }
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                                id="btn-search" class="btn btn-info btn-sm">
+                            Tìm kiếm
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="dlg-register" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Thông tin chi tiết</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">
+                            Họ tên
+                        </label>
+                        <span ng-bind="selected.fullname" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Mã ưu đãi
+                        </label>
+                        <span ng-bind="selected.code" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Thông tin xe:
+                        </label>
+                        <div class="">
+                            {{selected.manufacturer}} - {{selected.automaker}} - {{selected.carModel}} -- {{selected.license}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            Trạng thái
+                        </label>
+                        <span ng-model="selected.status" />
+                    </div>
+                    <div class="form-group" ng-repeat="prod in selected.products">
+                        <label class="control-label">
+                            Sản phẩm:
+                        </label> {{prod.name}} -
+                        <label class="control-label">Số lượng(cặp lốp):</label> {{prod.quantity}} -
+                        <label class="control-label">Bởi:</label> {{prod.createdBy}} - {{prod.claimedDate| utcToLocal:'dd.MM.yyyy - hh:mm:ss a'}}
+
+                    </div>
+                    <div ng-show="selected.canClaim">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Kích cỡ lốp
+                            </label>
+                            <input class="form-control" ng-model="claim.name" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Số lượng (cặp lốp)
+                            </label>
+                            <input class="form-control" type="number" ng-model="claim.quantity" />
+                        </div>
+                        <div>
+                            <p class="text-danger" ng-repeat="err in errors">{{err}}</p>
+                        </div>
+                        <a class="btn btn-success" ng-click="claimProduct()">Cập nhật</a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="Đóng"></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="/app/controllers/register-controller.js"></script>
+    <script src="/app/services/register-services.js"></script>
+    <script>
+        // just for the demos, avoids form submit
+        jQuery.validator.setDefaults({
+            debug: true,
+            success: "valid"
+        });
+        $("#search-form").validate({
+            rules: {
+                keyword: {
+                    required: false,
+                    number: true
+                }
+            }
+        });
+    </script>
+}

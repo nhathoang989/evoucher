@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "/Views/Shared/_Layout_BridgeStone.cshtml";
+}
+
+<div ng-controller="registerController"
+     class="register-content inner-content o-3-m o-2-d">
+    <div class="loader-container" ng-show="isBusy">
+        <div id="loader"></div>
+    </div>
+
+    <h1 class="title">ĐĂNG KÝ THAM GIA CHƯƠNG TRÌNH</h1>
+    <h2 class="sub-title">
+        Ưu đãi 300.000 VND phí dịch vụ khi mua
+        <br>02 lốp xe du lịch cao cấp
+        <a href="/">TURANZA GR100</a>
+    </h2>
+    <form method="post"
+          ng-init="register = initRegister()"
+          id="frm-register"
+           data-toggle="validator"
+          ng-class="{'submitted': submitted}"
+          ng-submit="submitRegister()">
+        <p>
+            <label for="fullname">Họ và tên</label>
+            <input id="fullname" required ng-model="register.fullname" ng-change="validate()" placeholder="Nguyễn Văn A">
+        </p>
+        <p>
+            <label for="phone">
+                Số điện thoại:
+                <span class="parent-tooltip">
+                    <img class="question" src="/Content/images/q.png" alt="Bridgestone dùng để gửi mã khuyến mãi qua tin nhắn SMS">
+                    <span class="tooltip">Bridgestone dùng để gửi mã khuyến mãi qua tin nhắn SMS</span>
+                </span>
+            </label>
+            <input id="phone" required ng-model="register.phone" ng-change="validate()" 
+                   pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
+                   data-error="Vui lòng nhập số điện thoại hợp lệ">
+            <div class="help-block with-errors"></div>
+        </p>
+        <p>
+            <label for="manufacturer">Nhà sản xuất xe bạn đang sử dụng...</label>
+            <input id="manufacturer" required ng-model="register.manufacturer" ng-change="validate()" placeholder="Toyota, Honda, Kia...">
+        </p>
+        <p>
+            <label for="automaker">Nhãn hiệu xe bạn đang sử dụng...</label>
+            <input id="automaker" required ng-model="register.automaker" ng-change="validate()" placeholder="Camry, Vios...">
+        </p>
+        <p>
+            <label for="model">Đời xe</label>
+            <input id="model" required ng-model="register.carModel" ng-change="validate()" placeholder="2016, 2017...">
+        </p>
+        <p>
+            <label for="license">Biển số xe</label>
+            <input id="license" required ng-model="register.license" ng-change="validate()" placeholder="51F-123.12">
+        </p>
+        <p>
+            <span class="text-danger" ng-repeat="err in errors">{{err}}</span>
+        </p>
+        <p>
+            <button id="submit" type="submit">ĐĂNG KÝ</button>
+        </p>
+    </form>
+</div>
+@section scripts{
+    <script src="/app/controllers/register-controller.js"></script>
+    <script src="/app/services/register-services.js"></script>
+}

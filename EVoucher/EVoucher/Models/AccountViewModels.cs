@@ -64,7 +64,6 @@ namespace EVoucher.Models
     public class RegisterViewModel
     {
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Text)]
         [Display(Name = "userName")]
         public string UserName { get; set; }

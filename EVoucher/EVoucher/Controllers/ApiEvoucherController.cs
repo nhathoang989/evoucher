@@ -130,6 +130,7 @@ namespace EVoucher.Controllers
                     conditions =
                    r =>
                       r.Status != (int)SWStatus.Deleted &&
+                      (
                            (string.IsNullOrEmpty(request.Key) || r.Code == request.Key)
                       &&
                        (string.IsNullOrEmpty(request.Keyword) || r.Phone == request.Keyword)
@@ -138,17 +139,19 @@ namespace EVoucher.Controllers
                        )
                        && (!to.HasValue
                            || (r.CreatedDate <= to.Value)
-                       );
+
+                       ));
             }
             else
             {
                 conditions =
                r =>
                   r.Status != (int)SWStatus.Deleted &&
+                  (
                        (r.Code == request.Key)
                   ||
                    (r.Phone == request.Keyword)
-                   ;
+                   );
             }
             return conditions;
             

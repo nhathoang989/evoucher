@@ -48,6 +48,19 @@ namespace EVoucher.Lib.ViewModels
         [JsonProperty("products")]
         public List<ClaimProductViewModel> Products { get; set; }
 
+        [JsonProperty("claimStatus")]
+        public string ClaimStatus
+        {
+            get
+            {
+                if (Products.Count == 2)
+                {
+                    return "Đã đổi 2 sản phẩm";
+                }
+                return "";
+            }
+        }
+
         [JsonProperty("canClaim")]
         public bool CanClaim
         {

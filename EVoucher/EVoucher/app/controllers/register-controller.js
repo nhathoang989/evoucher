@@ -1,10 +1,11 @@
 ﻿'use strict';
 app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$location', 'authService', 'registerServices', function ($scope, $rootScope, $timeout, $location, authService, registerServices) {
     $scope.errors = [];
-    $scope.selected = {};
+    $scope.selected = null;
     $rootScope.page = 'page-home';
     $scope.downloadLink = '';
     $scope.dateRegexp = new RegExp('\d{4}-\d{2}-\d{2}');
+    $scope.messageClass = 'info';
     $scope.register = {
         fullname: '',
         phone: '', // unique
@@ -106,7 +107,7 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
             registerServices.claimProduct($scope.claim).then(function (results) {
                 var resp = results.data;
                 if (resp.isSucceed) {
-
+                    alert('Cập nhật thành công');
                     $scope.claim = {
                         name: '',
                         quantity: 0,
@@ -155,6 +156,14 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
                 if (resp.isSucceed) {
                     $scope.data = resp.data;
                     $scope.downloadLink = '';
+                    if ($scope.data.totalItems > 0) {
+                        $scope.selected = $scope.data.items[0];
+                    }
+                    else {
+                        $scope.selected = null;
+                        $scope.message = 'Kết quả tìm kiếm: Không tìm thấy mã số / Số điện thoại đã nhập';
+                        $scope.messageClass = 'danger';
+                    }
                     $('#dlg-search').modal("hide");
                 }
                 $scope.isBusy = false;
@@ -198,7 +207,14 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
 
             });
         }
-
-
     }
+    $scope.back = function () {
+        $scope.selected = null;
+    }
+
+    $scope.$watch('isBusy', function (newValue, oldValue) {
+        if (newValue) {
+            $scope.message = '';
+        }
+    });
 }]);

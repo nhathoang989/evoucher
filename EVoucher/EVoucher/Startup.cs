@@ -15,7 +15,13 @@ namespace EVoucher
         {
             ConfigureAuth(app);
             Mapper.Initialize(cfg => {
-                cfg.CreateMap<Controllers.Register, BSRegisterViewModel>();
+                cfg.CreateMap<Register, BSRegisterViewModel>();
+                cfg.CreateMap<BSRegisterViewModel, ExportViewModel>()
+                .AfterMap((src, dest) =>
+                {
+                    dest.Product1 = (src.Products.Count > 0 ? $"Sản phẩm đã mua: {src.Products[0].Name} - Số lượng (cặp lốp): {src.Products[0].Quantity} - Bởi: {src.Products[0].CreatedBy}" : string.Empty);
+                    dest.Product2 = (src.Products.Count > 1 ? $"Sản phẩm đã mua: {src.Products[1].Name} - Số lượng (cặp lốp): {src.Products[1].Quantity} - Bởi: {src.Products[1].CreatedBy}" : string.Empty);
+                });
                 cfg.CreateMap<ClaimProduct, ClaimProductViewModel>();
                 cfg.CreateMap<Models.RegisterViewModel, ApplicationUser> ();
             });

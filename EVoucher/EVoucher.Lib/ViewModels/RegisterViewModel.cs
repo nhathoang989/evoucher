@@ -53,9 +53,10 @@ namespace EVoucher.Lib.ViewModels
         {
             get
             {
-                if (Products.Count == 2)
+                if (Products.Count > 0)
                 {
-                    return "Đã đổi 2 sản phẩm";
+                    int quantity = Products.Sum(p => p.Quantity);
+                    return $"Đã đổi {quantity} sản phẩm";
                 }
                 return "";
             }
@@ -69,7 +70,7 @@ namespace EVoucher.Lib.ViewModels
                 int total = 0;
                 if (Products != null && Products.Count > 0)
                 {
-                    Products.ForEach(p => total += p.Quantity);
+                    total = Products.Sum(p => p.Quantity);
                 }
                 return total < 2;
             }
@@ -117,12 +118,12 @@ namespace EVoucher.Lib.ViewModels
             return new RepositoryResponse<bool>() { IsSucceed = isSucceed, Data = isSucceed };
         }
 
-        public override  RepositoryResponse<bool> RemoveRelatedModels(BSRegisterViewModel view, EvoucherEntities _context = null, DbContextTransaction _transaction = null)
+        public override RepositoryResponse<bool> RemoveRelatedModels(BSRegisterViewModel view, EvoucherEntities _context = null, DbContextTransaction _transaction = null)
         {
             bool isSucceed = true;
             foreach (var product in view.Products)
             {
-                isSucceed = isSucceed && ( product.RemoveModel(_context: _context, _transaction: _transaction)).Data;
+                isSucceed = isSucceed && (product.RemoveModel(_context: _context, _transaction: _transaction)).Data;
             }
             return new RepositoryResponse<bool>() { IsSucceed = isSucceed, Data = isSucceed };
         }

@@ -169,10 +169,10 @@ namespace EVoucher.Controllers
                 );
 
             string FolderPath = "/Exports";
-            List<Register> lstData = new List<Register>();
+            List<ExportViewModel> lstData = new List<ExportViewModel>();
             foreach (var item in result.Data.Items)
             {
-                lstData.Add(Mapper.Map<Register>(item));
+                lstData.Add(Mapper.Map<ExportViewModel>(item));
             }
             string SavedPath = CommonHelper.ExportToExcel(lstData, "Registers", FolderPath, "BridgeStone_registers_", out string error);
             return new RepositoryResponse<string>()
@@ -197,10 +197,10 @@ namespace EVoucher.Controllers
             users.Data.TotalItems = users.Data.Items.Count;
 
             string FolderPath = "/Exports";
-            List<Register> lstData = new List<Register>();
+            List<ExportViewModel> lstData = new List<ExportViewModel>();
             foreach (var item in users.Data.Items)
             {
-                lstData.Add(Mapper.Map<Register>(item));
+                lstData.Add(Mapper.Map<ExportViewModel>(item));
             }
             string SavedPath = CommonHelper.ExportToExcel(lstData, "Registers", FolderPath, "BridgeStone_registers_", out string error);
             return new RepositoryResponse<string>()
@@ -343,6 +343,42 @@ namespace EVoucher.Controllers
         public Nullable<System.DateTime> UpdatedDate { get; set; }
         [JsonProperty("sendCodeDate")]
         public Nullable<System.DateTime> SendCodeDate { get; set; }
+
+        #endregion
+    }
+
+    public class ExportViewModel
+    {
+        #region Models
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("fullname")]
+        public string Fullname { get; set; }
+        [JsonProperty("phone")]
+        public string Phone { get; set; }
+        [JsonProperty("manufacturer")]
+        public string Manufacturer { get; set; }
+        [JsonProperty("automaker")]
+        public string Automaker { get; set; }
+        [JsonProperty("carModel")]
+        public string CarModel { get; set; }
+        [JsonProperty("license")]
+        public string License { get; set; }
+        [JsonProperty("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+        [JsonProperty("code")]
+        public string Code { get; set; }
+        [JsonProperty("sendCodeStatus")]
+        public string SendCodeStatus { get; set; }
+        [JsonProperty("sendCodeDate")]
+        public Nullable<System.DateTime> SendCodeDate { get; set; }
+        [JsonProperty("claimStatus")]
+        public string ClaimStatus { get; set; }
+        [JsonProperty("product1")]
+        public string Product1 { get; set; }
+        [JsonProperty("product2")]
+        public string Product2 { get; set; }
 
         #endregion
     }

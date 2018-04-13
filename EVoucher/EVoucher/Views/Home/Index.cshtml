@@ -18,7 +18,7 @@
     <form method="post"
           ng-init="register = initRegister()"
           id="frm-register"
-           data-toggle="validator"
+          data-toggle="validator"
           ng-class="{'submitted': submitted}"
           ng-submit="submitRegister()">
         <p>
@@ -33,7 +33,7 @@
                     <span class="tooltip">Bridgestone dùng để gửi mã khuyến mãi qua tin nhắn SMS</span>
                 </span>
             </label>
-            <input id="phone" required ng-model="register.phone" ng-change="validate()" 
+            <input id="phone" required ng-model="register.phone" ng-change="validate()"
                    pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
                    data-error="Vui lòng nhập số điện thoại hợp lệ">
             <div class="help-block with-errors"></div>
@@ -53,6 +53,14 @@
         <p>
             <label for="license">Biển số xe</label>
             <input id="license" required ng-model="register.license" ng-change="validate()" placeholder="51F-123.12">
+        </p>
+        <p>
+            <label for="cb-tnc" style="font-size:12px;">
+            <input id="cb-tnc" type="checkbox" ng-model="isValid" style="width: initial;display: inline-block;" />
+            
+                Tôi đã đọc và đồng ý với <a target="_blank" href="/the-le-dieu-kien"><b>thể lệ & điều khoản</b></a> chương trình
+
+            </label>
         </p>
         <p>
             <span class="text-danger" ng-repeat="err in errors">{{err}}</span>

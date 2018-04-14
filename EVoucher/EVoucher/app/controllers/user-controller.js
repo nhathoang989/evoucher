@@ -61,6 +61,11 @@ app.controller('userController', ['$scope', '$rootScope', '$timeout', '$location
             userServices.getUsers($scope.request).then(function (results) {
                 if (results.data.isSucceed) {
                     $scope.data = results.data.data;
+                    $("html, body").animate({ "scrollTop": "0px" }, 500);
+                    if ($scope.data.totalItems==0) {
+                        $scope.message = 'Kết quả tìm kiếm: Không tìm thấy';
+                        $scope.messageClass = 'warning';
+                    }
                 }
                 $scope.isBusy = false;
             }, function (error) {

@@ -131,12 +131,12 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
     }
 
 
-    $scope.loadRegisters = function (pageIndex = 0, btn) {
+    $scope.loadRegisters = function (pageIndex, btn) {
         $scope.isValid = $scope.request.keyword == '' || $.isNumeric($scope.request.keyword)
         if (!$scope.isBusy && $scope.isValid) {
             
             $scope.isBusy = true;
-            if (!pageIndex) {
+            if (pageIndex) {
                 $scope.request.pageIndex = pageIndex;
             }
             if (Date.parse($scope.dateRange.fromDate)) {
@@ -156,13 +156,14 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
                 if (resp.isSucceed) {
                     $scope.data = resp.data;
                     $scope.downloadLink = '';
+                    $("html, body").animate({ "scrollTop": "0px" }, 500);
                     if ($scope.data.totalItems > 0) {
                         $scope.selected = $scope.data.items[0];
                     }
                     else {
                         $scope.selected = null;
                         $scope.message = 'Kết quả tìm kiếm: Không tìm thấy mã số / Số điện thoại đã nhập';
-                        $scope.messageClass = 'danger';
+                        $scope.messageClass = 'warning';
                     }
                     $('#dlg-search').modal("hide");
                 }

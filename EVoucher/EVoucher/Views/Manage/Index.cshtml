@@ -72,7 +72,7 @@
                     <label class="control-label">
                         Thông tin xe:
                     </label>
-                    <span>{{selected.manufacturer}} - {{selected.automaker}} - {{selected.carModel}} - {{selected.license}}</span>
+                    <span ng-bind="selected.manufacturer" /> - <span ng-bind="selected.automaker" /> -<span ng-bind="selected.carModel" /> -<span ng-bind="selected.license" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">
@@ -83,9 +83,8 @@
                 <div class="form-group" ng-repeat="prod in selected.products">
                     <label class="control-label">
                         Sản phẩm đã mua:
-                    </label> {{prod.name}} -
-                    <label class="control-label">Số lượng (cặp lốp):</label> {{prod.quantity}} -
-                    <label class="control-label">Bởi:</label> {{prod.createdBy}} - {{prod.claimedDate| utcToLocal:'dd.MM.yyyy - hh:mm:ss a'}}
+                    </label> <span ng-bind="prod.name" /> -
+                    <label class="control-label">Số lượng (cặp lốp):</label> <span ng-bind="prod.quantity" />
 
                 </div>
                 <div class="row" ng-show="selected.canClaim">
@@ -102,7 +101,7 @@
                         <input class="form-control" type="number" ng-model="claim.quantity" />
                     </div>
                     <div class="form-group" style="margin-left:15px;">
-                        <p class="text-danger" ng-repeat="err in errors">{{err}}</p>
+                        <p class="text-danger" ng-repeat="err in errors"> <span ng-bind="err" /></p>
 
                         <a class="btn btn-info" ng-click="claimProduct()">Cập nhật</a>
                     </div>
@@ -140,35 +139,35 @@
                         <tr ng-repeat="register in data.items">
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
-                                <span>{{register.fullname}}</span>
+                                <span ng-bind="register.fullname" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
-                                <span>{{register.phone}}</span>
+                                <span ng-bind="register.phone" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
-                                <span>{{register.manufacturer}}</span>
+                                <span ng-bind="register.manufacturer" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
-                                <span>{{register.automaker}}</span>
+                                <span ng-bind="register.automaker" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
-                                <span>{{register.carModel}}</span>
+                                <span ng-bind="register.carModel" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.Address" />-->
-                                <span>{{register.license}}</span>
+                                <span ng-bind="register.license" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
-                                <span>{{register.code}}</span>
+                                <span ng-bind="register.code" />
                             </td>
                             <td>
                                 <!--<span ng-hide="register.isEdit" ng-bind="register.ExactLocation" />-->
-                                <span>{{register.sendCodeStatus}}</span>
+                                <span ng-bind="register.sendCodeStatus" />
                             </td>
                             <td>
                                 <span>
@@ -193,7 +192,11 @@
         <div class="text-center" ng-show="data.totalPage > 1">
             <ul class="pagination">
                 <li class="page-item"><a class="page-link active" href="javascript:void(0)" ng-click="loadRegisters(data.pageIndex-1)" ng-hide="data.pageIndex==0">Trang trước</a></li>
-                <li class="page-item" ng-class="{active: n-1==data.pageIndex}" ng-repeat="n in range(data.totalPage)"><a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(n-1)">{{n}}</a></li>
+                <li class="page-item" ng-class="{active: n-1==data.pageIndex}" ng-repeat="n in range(data.totalPage)">
+                    <a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(n-1)">
+                        <span ng-bind="n"/>
+                    </a>
+                </li>
                 <li class="page-item">
                     <a class="page-link" href="javascript:void(0)"
                        ng-click="loadRegisters(data.pageIndex + 1)" ng-hide="data.pageIndex >= (data.totalPage-1)">Trang sau</a>

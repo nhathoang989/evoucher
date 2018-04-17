@@ -14,7 +14,7 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
         carModel: '', //2015, 2016
         license: ''
     }
-    $scope.isValid = true;
+    $scope.isValid = false;
     $scope.isBusy = false;
 
     $('.side-nav li').removeClass('active');
@@ -76,7 +76,7 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
 
     $scope.submitRegister = function () {
         if (!$scope.isValid) {
-            $scope.errors.push('Thông tin không hợp lệ');
+            $scope.errors.push('Bạn chưa đồng ý điều kiện và thể lệ của chương trình');
         }
         else {
             if (!$scope.isBusy) {

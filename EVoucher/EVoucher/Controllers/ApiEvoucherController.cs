@@ -280,6 +280,7 @@ namespace EVoucher.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         [Route("claim")]
         public async Task<RepositoryResponse<ClaimProductViewModel>> ClaimProduct(ClaimProduct model)

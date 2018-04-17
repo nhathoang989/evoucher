@@ -24,7 +24,7 @@ namespace EVoucher.Lib
         {
             string message = $"Bridgestone Việt Nam \r\n";
             message += "Quy khach vua dang ki chuong trinh Khuyen mai cua Bridgestone.\r\n";
-            message += "Mã ưu đãi: {code}\r\n";
+            message += $"Mã ưu đãi: {code}\r\n";
             message += "Co gia tri giam 300 nghin dong tren phi dich vu khi mua 02 lop Turanza GR100 tai he thong B-select, B-shop cua Bridgestone tren ca nuoc.\r\n";
             message += "Ma uu dai co Hieu luc tu 15/04 den 30/04/2018\r\n";
             message += "De biet them chi tiet quy khach vui long goi den hotline: 1900 54 54 68 de biet them chi tiet.\r\n";

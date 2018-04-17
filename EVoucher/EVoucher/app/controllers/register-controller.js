@@ -131,12 +131,12 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
     }
 
 
-    $scope.loadRegisters = function (pageIndex = 0, btn) {
+    $scope.loadRegisters = function (pageIndex, btn) {       
         $scope.isValid = $scope.request.keyword == '' || $.isNumeric($scope.request.keyword)
         if (!$scope.isBusy && $scope.isValid) {
             
             $scope.isBusy = true;
-            if (!pageIndex) {
+            if (pageIndex) {
                 $scope.request.pageIndex = pageIndex;
             }
             if (Date.parse($scope.dateRange.fromDate)) {
@@ -173,10 +173,10 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
             });
         }
     }
-    $scope.exportRegisters = function (pageIndex = 0, btn) {
+    $scope.exportRegisters = function (pageIndex, btn) {
         if (!$scope.isBusy) {
             $scope.isBusy = true;
-            if (!pageIndex) {
+            if (pageIndex) {
                 $scope.request.pageIndex = pageIndex;
             }
             if (Date.parse($scope.dateRange.fromDate)) {

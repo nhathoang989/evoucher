@@ -98,6 +98,21 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
         }
     }
 
+    $scope.importRegisters = function () {
+        $scope.base64 = $('#hid-import-file').val();
+        if ($scope.base64) {
+            $scope.isBusy = true;
+            registerServices.importRegisters($scope.base64).then(function (results) {
+                var resp = results.data;
+
+                if (resp.isSucceed) {
+                    $scope.data = resp.data;
+                }
+                $scope.isBusy = false;
+            });
+        }
+    }
+
     $scope.claimProduct = function () {
         if (!$scope.isBusy) {
 

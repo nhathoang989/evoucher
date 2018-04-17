@@ -16,7 +16,13 @@
         <div class="col-lg-5">
             @if (isAdmin)
             {
-                <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Import Users</span>
+                    <input type="file" class="form-control inp-file-import d-inline" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" aria-describedby="basic-addon1">
+                    <input type="hidden" id="hid-import-file" />
+                    <a href="#" ng-click="importRegisters()" class="btn btn-success">Save</a>
+                </div>
+                <a data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
                    ng-click="openSearch()" class="btn btn-info btn-sm">
                     Tìm kiếm
                 </a>
@@ -194,7 +200,7 @@
                 <li class="page-item"><a class="page-link active" href="javascript:void(0)" ng-click="loadRegisters(data.pageIndex-1)" ng-hide="data.pageIndex==0">Trang trước</a></li>
                 <li class="page-item" ng-class="{active: n-1==data.pageIndex}" ng-repeat="n in range(data.totalPage)">
                     <a class="page-link" href="javascript:void(0)" ng-click="loadRegisters(n-1)">
-                        <span ng-bind="n"/>
+                        <span ng-bind="n" />
                     </a>
                 </li>
                 <li class="page-item">
@@ -345,6 +351,12 @@
                     required: false,
                     number: true
                 }
+            }
+        });
+        $(document).on('change', '.inp-file-import', function () {
+            var file = this.files[0];
+            if (file !== undefined && file !== null) {
+                window.Common.getBase64(file, $('#hid-import-file'));
             }
         });
     </script>

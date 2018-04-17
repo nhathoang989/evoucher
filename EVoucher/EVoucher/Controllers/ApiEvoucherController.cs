@@ -88,6 +88,48 @@ namespace EVoucher.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("import-registers")]
+        public async Task<RepositoryResponse<List<BSRegisterViewModel>>> ImportRegistersAsync(ImportUsers file)
+        {
+
+            List<int> failed = new List<int>();
+            List<string> strRegisters = Swastika.Common.Helper.CommonHelper.LoadImportExcelRecords(file.Base64.Split(',')[1], 4, 1, 7, out failed);
+            bool isSucceed = true;
+            List<BSRegisterViewModel> result = new List<BSRegisterViewModel>();
+            foreach (var item in strRegisters)
+            {
+                string[] strUser = item.Split('|');
+                string password = strUser[1];
+                BSRegisterViewModel user = new BSRegisterViewModel()
+                {
+                    Fullname = strUser[0],
+                    Phone = strUser[1],
+                    License = strUser[4],
+                    Manufacturer = strUser[5],
+                    Automaker = strUser[6],
+                    CarModel = strUser[7]
+                };
+                result.Add(user);
+                //var result = await user.SaveModelAsync(); 
+                //isSucceed = isSucceed && result.IsSucceed;
+            }
+            if (isSucceed)
+            {
+                return new RepositoryResponse<List<BSRegisterViewModel>>()
+                {
+                    IsSucceed = true,
+                    Data = result
+                };
+                //return UserViewModel.Repository.GetModelList();
+            }
+            else
+            {
+                return new RepositoryResponse<List<BSRegisterViewModel>>();
+            }
+        }
+
         [HttpPost]
         [Route("register/list")]
         public RepositoryResponse<PaginationModel<BSRegisterViewModel>> Registers(RequestPaging request)
@@ -174,7 +216,11 @@ namespace EVoucher.Controllers
             {
                 lstData.Add(Mapper.Map<ExportViewModel>(item));
             }
-            string SavedPath = CommonHelper.ExportToExcel(lstData, "Registers", FolderPath, "BridgeStone_registers_", out string error);
+            string SavedPath = CommonHelper.ExportToExcel(lstData, "Registers", FolderPath, "BridgeStone_registers_", out string error,
+                new List<string> {
+                    "Id","Fullname", "Phone", "Manufaturer", "Automaker", "CarModel", "Plate", "Created Date", "Code", "Send Code Status", "Send Code Date", "Claim Status", "Sản phẩm 1", "Đại lý 1",
+                    "Sản phẩm 2", "Đại lý 2"
+                });
             return new RepositoryResponse<string>()
             {
                 IsSucceed = !string.IsNullOrEmpty(SavedPath),
@@ -364,8 +410,8 @@ namespace EVoucher.Controllers
         public string Automaker { get; set; }
         [JsonProperty("carModel")]
         public string CarModel { get; set; }
-        [JsonProperty("license")]
-        public string License { get; set; }
+        [JsonProperty("plate")]
+        public string Plate { get; set; }
         [JsonProperty("createdDate")]
         public System.DateTime CreatedDate { get; set; }
         [JsonProperty("code")]
@@ -378,8 +424,13 @@ namespace EVoucher.Controllers
         public string ClaimStatus { get; set; }
         [JsonProperty("product1")]
         public string Product1 { get; set; }
+        [JsonProperty("Đại lý 1")]
+        public string Retails1{ get; set; }
+
         [JsonProperty("product2")]
         public string Product2 { get; set; }
+        [JsonProperty("Đại lý 2")]
+        public string Retails2 { get; set; }
         #endregion
     }
 }

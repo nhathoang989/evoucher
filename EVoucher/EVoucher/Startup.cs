@@ -20,9 +20,13 @@ namespace EVoucher
                 .AfterMap((src, dest) =>
                 {
                     dest.Product1 = (src.Products.Count > 0 ? $"Sản phẩm đã mua: {src.Products[0].Name} - Số lượng (cặp lốp): {src.Products[0].Quantity} - Bởi: {src.Products[0].CreatedBy} - { src.Products[0].ClaimedDate.ToLocalTime()}" : string.Empty);
+                    dest.Retails1 = (src.Products.Count > 0 ? src.Products[0].CreatedBy:string.Empty);
+                    
                     dest.Product2 = (src.Products.Count > 1 ? $"Sản phẩm đã mua: {src.Products[1].Name} - Số lượng (cặp lốp): {src.Products[1].Quantity} - Bởi: {src.Products[1].CreatedBy} - { src.Products[1].ClaimedDate.ToLocalTime()}" : string.Empty);
+                    dest.Retails2 = (src.Products.Count > 1 ? src.Products[1].CreatedBy : string.Empty);
                     dest.CreatedDate = src.CreatedDate.ToLocalTime();
                     dest.SendCodeDate = src.SendCodeDate?.ToLocalTime();
+                    dest.Plate = src.License;
                 });
                 cfg.CreateMap<ClaimProduct, ClaimProductViewModel>();
                 cfg.CreateMap<Models.RegisterViewModel, ApplicationUser> ();

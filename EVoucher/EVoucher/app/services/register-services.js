@@ -31,6 +31,17 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
         return commonServices.getApiResult(req);
     };
 
+    var _loadImportRegisters = function (strBase64) {
+        var url = 'load-import-registers';
+        var req = {
+            method: 'POST',
+            url: apiUrl + url,
+            data: JSON.stringify({ strBase64: strBase64 })
+        };
+
+        return commonServices.getApiResult(req);
+    };
+
     var _exportRegisters = function (request) {
         var isClaimed = '';
         if (request.isClaimed != 'null') {
@@ -74,6 +85,7 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
         return commonServices.getApiResult(req);
     };
 
+    registersServiceFactory.loadImportRegisters = _loadImportRegisters;
     registersServiceFactory.importRegisters = _importRegisters;
     registersServiceFactory.claimProduct = _claimProduct;
     registersServiceFactory.submitRegister = _submitRegister;

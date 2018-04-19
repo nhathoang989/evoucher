@@ -15,41 +15,40 @@
         <h2>Mã ưu đãi</h2>
         <div class="col-lg-5">
             @if (isAdmin)
-            {
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">Import Users</span>
-                    <input type="file" class="form-control inp-file-import d-inline" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" aria-describedby="basic-addon1">
-                    <input type="hidden" id="hid-import-file" />
-                    <a href="#" ng-click="importRegisters()" class="btn btn-success">Save</a>
-                </div>
-                <a data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-                   ng-click="openSearch()" class="btn btn-info btn-sm">
-                    Tìm kiếm
-                </a>
+    {
+        <input type="file" class="inp-file-import d-inline" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" aria-describedby="basic-addon1">
+        <input type="hidden" id="hid-import-file" />
 
-                <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-                   ng-click="exportRegisters()" id="btn-search" class="btn btn-warning btn-sm">
-                    Export
-                </a>
-                <a href="{{downloadLink}}" class="btn btn-sm btn-success" ng-show="downloadLink!=''">Tải xuống</a>
 
-            }
+        <a data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+           ng-click="openSearch()" class="btn btn-info btn-sm">
+            Tìm kiếm
+        </a>
+        <a href="#" ng-click="loadImportRegisters()" class="btn btn-default btn-sm">Load</a>
+        <a href="#" ng-show="isImport " ng-click="importRegisters()" class="btn btn-success btn-sm">import</a>
+        <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+           ng-click="exportRegisters()" id="btn-search" class="btn btn-warning btn-sm">
+            Export
+        </a>
+        <a href="{{downloadLink}}" class="btn btn-sm btn-success" ng-show="downloadLink!=''">Tải xuống</a>
+
+}
             @if (!isAdmin)
-            {
-                <div ng-show="selected == null">
-                    <p class="alert-{{messageClass}}">{{message}}</p>
-                    <p>Nhập mã ưu đãi</p>
-                    <input type="text" class="form-control" maxlength="6" ng-enter="loadRegisters(0)" ng-model="request.key" name="key" />
-                    <p>Hoặc nhập số điện thoại</p>
-                    <input type="text" class="form-control" pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
-                           ng-model="request.keyword" id="keyword" name="keyword" ng-enter="loadRegisters(0)" />
-                    <p class="text-danger">(Số điện thoại ghi liền không cách nhau)</p>
-                    <button type="button" ng-click="loadRegisters()" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-                            id="btn-search" class="btn btn-info btn-sm">
-                        Tìm kiếm
-                    </button>
-                </div>
-            }
+    {
+        <div ng-show="selected == null">
+            <p class="alert-{{messageClass}}">{{message}}</p>
+            <p>Nhập mã ưu đãi</p>
+            <input type="text" class="form-control" maxlength="6" ng-enter="loadRegisters(0)" ng-model="request.key" name="key" />
+            <p>Hoặc nhập số điện thoại</p>
+            <input type="text" class="form-control" pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
+                   ng-model="request.keyword" id="keyword" name="keyword" ng-enter="loadRegisters(0)" />
+            <p class="text-danger">(Số điện thoại ghi liền không cách nhau)</p>
+            <button type="button" ng-click="loadRegisters()" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                    id="btn-search" class="btn btn-info btn-sm">
+                Tìm kiếm
+            </button>
+        </div>
+}
         </div>
         <div class="col-lg-7">
             <div class="alert alert-success" style="display:none;" id="message">

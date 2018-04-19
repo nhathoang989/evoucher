@@ -2,6 +2,7 @@
 app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$location', 'authService', 'registerServices', function ($scope, $rootScope, $timeout, $location, authService, registerServices) {
     $scope.errors = [];
     $scope.selected = null;
+    $scope.isImport = false;
     $rootScope.page = 'page-home';
     $scope.downloadLink = '';
     $scope.dateRegexp = new RegExp('\d{4}-\d{2}-\d{2}');
@@ -107,6 +108,22 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
 
                 if (resp.isSucceed) {
                     $scope.data = resp.data;
+                }
+                $scope.isBusy = false;
+            });
+        }
+    }
+
+    $scope.loadImportRegisters = function () {
+        $scope.base64 = $('#hid-import-file').val();
+        if ($scope.base64) {
+            $scope.isBusy = true;
+            registerServices.loadImportRegisters($scope.base64).then(function (results) {
+                var resp = results.data;
+
+                if (resp.isSucceed) {
+                    $scope.data = resp.data;
+                    $scope.isImport = true;
                 }
                 $scope.isBusy = false;
             });

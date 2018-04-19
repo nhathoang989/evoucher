@@ -91,42 +91,146 @@ namespace EVoucher.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("import-registers")]
-        public async Task<RepositoryResponse<List<BSRegisterViewModel>>> ImportRegistersAsync(ImportUsers file)
+        public async Task<RepositoryResponse<PaginationModel<BSRegisterViewModel>>> ImportRegistersAsync(ImportUsers file)
         {
 
             List<int> failed = new List<int>();
-            List<string> strRegisters = Swastika.Common.Helper.CommonHelper.LoadImportExcelRecords(file.Base64.Split(',')[1], 4, 1, 7, out failed);
+            List<string> strRegisters = Swastika.Common.Helper.CommonHelper.LoadImportExcelRecords(file.Base64.Split(',')[1], 4, 2, 7, out failed);
             bool isSucceed = true;
             List<BSRegisterViewModel> result = new List<BSRegisterViewModel>();
+            List<string> errors = new List<string>();
             foreach (var item in strRegisters)
             {
                 string[] strUser = item.Split('|');
-                string password = strUser[1];
-                BSRegisterViewModel user = new BSRegisterViewModel()
+
+                BSRegisterViewModel register = new BSRegisterViewModel()
                 {
                     Fullname = strUser[0],
                     Phone = strUser[1],
-                    License = strUser[4],
-                    Manufacturer = strUser[5],
-                    Automaker = strUser[6],
-                    CarModel = strUser[7]
+                    License = strUser[2],
+                    Manufacturer = strUser[3],
+                    Automaker = strUser[4],
+                    CarModel = strUser[5]
                 };
-                result.Add(user);
-                //var result = await user.SaveModelAsync(); 
-                //isSucceed = isSucceed && result.IsSucceed;
+
+                if (!string.IsNullOrEmpty(register.Phone)
+                && !BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == register.Phone && r.Status != (int)SWStatus.Deleted))
+                {
+                    register.Code = BSHelper.GenerateCode();
+
+                    while (BSRegisterViewModel.Repository.CheckIsExists(r => r.Code == register.Code))
+                    {
+                        register.Code = BSHelper.GenerateCode();
+                    }
+
+                    register.SendCodeStatus = "-1";// await BSHelper.SendMessage(register.Phone, register.Code);
+                    register.SendCodeDate = DateTime.UtcNow;
+                    register.Status = SWStatus.Preview;
+                    var saveResult = await register.SaveModelAsync();
+                    if (saveResult.IsSucceed)
+                    {
+                        register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                        var fields = new List<EntityField>();
+                        fields.Add(new EntityField()
+                        {
+                            PropertyName = "SendCodeStatus",
+                            PropertyValue = register.SendCodeStatus
+                        });
+                       
+                        await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
+                        result.Add(saveResult.Data);
+                    }
+                    else
+                    {
+                        errors.Add($"{register.Phone}: ");
+                        errors.AddRange(saveResult.Errors);
+                    }
+                }
+                else
+                {
+                    errors.Add($"Số điện thoại { register.Phone } đã được đăng ký");
+                }
+
             }
             if (isSucceed)
             {
-                return new RepositoryResponse<List<BSRegisterViewModel>>()
+                return new RepositoryResponse<PaginationModel<BSRegisterViewModel>>()
                 {
                     IsSucceed = true,
-                    Data = result
+                    Data = new PaginationModel<BSRegisterViewModel>()
+                    {
+                        Items = result,
+                        TotalItems = result.Count,
+                        TotalPage = 1,
+                        PageIndex = 0,
+                        PageSize = result.Count
+                    },
+                    Errors = errors
                 };
                 //return UserViewModel.Repository.GetModelList();
             }
             else
             {
-                return new RepositoryResponse<List<BSRegisterViewModel>>();
+                return new RepositoryResponse<PaginationModel<BSRegisterViewModel>>() { Errors = errors };
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("load-import-registers")]
+        public async Task<RepositoryResponse<PaginationModel<BSRegisterViewModel>>> LoadImportRegistersAsync(ImportUsers file)
+        {
+
+            List<int> failed = new List<int>();
+            List<string> strRegisters = Swastika.Common.Helper.CommonHelper.LoadImportExcelRecords(file.Base64.Split(',')[1], 4, 2, 7, out failed);
+            bool isSucceed = true;
+            List<BSRegisterViewModel> result = new List<BSRegisterViewModel>();
+            List<string> errors = new List<string>();
+            foreach (var item in strRegisters)
+            {
+                string[] strUser = item.Split('|');
+
+                BSRegisterViewModel register = new BSRegisterViewModel()
+                {
+                    Fullname = strUser[0],
+                    Phone = strUser[1],
+                    License = strUser[2],
+                    Manufacturer = strUser[3],
+                    Automaker = strUser[4],
+                    CarModel = strUser[5]
+                };
+
+                if (!string.IsNullOrEmpty(register.Phone)
+                && !BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == register.Phone && r.Status != (int)SWStatus.Deleted))
+                {
+                    result.Add(register);
+                }
+                else
+                {
+                    errors.Add($"Số điện thoại { register.Phone } đã được đăng ký");
+                }
+
+            }
+            if (isSucceed)
+            {
+                return new RepositoryResponse<PaginationModel<BSRegisterViewModel>>()
+                {
+                    IsSucceed = true,
+                    Data = new PaginationModel<BSRegisterViewModel>()
+                    {
+                        Items = result,
+                        TotalItems = result.Count,
+                        TotalPage = 1,
+                        PageIndex = 0,
+                        PageSize = result.Count
+                    },
+                    Errors = errors
+                };
+                //return UserViewModel.Repository.GetModelList();
+            }
+            else
+            {
+                return new RepositoryResponse<PaginationModel<BSRegisterViewModel>>() { Errors = errors };
             }
         }
 
@@ -154,7 +258,7 @@ namespace EVoucher.Controllers
                     request.OrderBy, request.Direction,
                     null, request.PageIndex
                 );
-            users.Data.Items = users.Data.Items.Where(r => r.Products.Sum(p=>p.Quantity) == claimed).ToList();
+            users.Data.Items = users.Data.Items.Where(r => r.Products.Sum(p => p.Quantity) == claimed).ToList();
             users.Data.TotalItems = users.Data.Items.Count;
             return users;
         }
@@ -169,20 +273,20 @@ namespace EVoucher.Controllers
             Expression<Func<BridgeStone_Register, bool>> conditions;
             if (isAdmin)
             {
-                    conditions =
-                   r =>
-                      r.Status != (int)SWStatus.Deleted &&
-                      (
-                           (string.IsNullOrEmpty(request.Key) || r.Code == request.Key)
-                      &&
-                       (string.IsNullOrEmpty(request.Keyword) || r.Phone == request.Keyword)
-                      && (!from.HasValue
-                       || (r.CreatedDate >= from.Value)
-                       )
-                       && (!to.HasValue
-                           || (r.CreatedDate <= to.Value)
+                conditions =
+               r =>
+                  r.Status != (int)SWStatus.Deleted &&
+                  (
+                       (string.IsNullOrEmpty(request.Key) || r.Code == request.Key)
+                  &&
+                   (string.IsNullOrEmpty(request.Keyword) || r.Phone == request.Keyword)
+                  && (!from.HasValue
+                   || (r.CreatedDate >= from.Value)
+                   )
+                   && (!to.HasValue
+                       || (r.CreatedDate <= to.Value)
 
-                       ));
+                   ));
             }
             else
             {
@@ -196,7 +300,7 @@ namespace EVoucher.Controllers
                    );
             }
             return conditions;
-            
+
         }
 
         [HttpPost]
@@ -229,7 +333,7 @@ namespace EVoucher.Controllers
         }
 
 
-        [HttpPost]        
+        [HttpPost]
         [Route("register/export/{claimed:int}")]
         public RepositoryResponse<string> ExportRegisters(RequestPaging request, int claimed)
         {
@@ -278,11 +382,24 @@ namespace EVoucher.Controllers
                     model.Code = BSHelper.GenerateCode();
                 }
 
-                model.SendCodeStatus = await BSHelper.SendMessage(model.Phone, model.Code);
+                model.SendCodeStatus = "-1";
                 model.SendCodeDate = DateTime.UtcNow;
                 var register = Mapper.Map<BSRegisterViewModel>(model);
                 register.Status = SWStatus.Preview;
-                return await register.SaveModelAsync();
+                var saveResult = await register.SaveModelAsync();
+                if (saveResult.IsSucceed)
+                {
+                    register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                    var fields = new List<EntityField>();
+                    fields.Add(new EntityField()
+                    {
+                        PropertyName = "SendCodeStatus",
+                        PropertyValue = register.SendCodeStatus
+                    });
+
+                    await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
+                }
+                return saveResult;
             }
             else
             {
@@ -425,7 +542,7 @@ namespace EVoucher.Controllers
         [JsonProperty("product1")]
         public string Product1 { get; set; }
         [JsonProperty("Đại lý 1")]
-        public string Retails1{ get; set; }
+        public string Retails1 { get; set; }
 
         [JsonProperty("product2")]
         public string Product2 { get; set; }

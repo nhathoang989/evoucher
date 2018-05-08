@@ -81,6 +81,9 @@
                     <li ng-class="{'active': page =='page-home'}">
                         @Html.ActionLink("Mã ưu đãi", "Index", "Manage")
                     </li>
+                    <li ng-class="{'active': page =='page-customers'}">
+                        @Html.ActionLink("Khách hàng", "MyClaim", "Manage")
+                    </li>
                     @if (User.IsInRole("Admin"))
                     {
                         <li ng-class="{'active': page =='page-managers'}">

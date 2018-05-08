@@ -96,6 +96,14 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Swastia.Identity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\plugins\Swastia.Identity.dll</HintPath>
+    </Reference>
+    <Reference Include="Swastika, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\plugins\Swastika.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -327,6 +335,7 @@
     <Content Include="Views\Home\Thankyou.cshtml" />
     <Content Include="Views\Manage\Managers.cshtml" />
     <Content Include="Views\Home\Retails.cshtml" />
+    <Content Include="Views\Manage\MyClaim.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="app\views\" />
@@ -346,17 +355,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Swastika\Swastika-Heart\src\Swastika.Framework\Swastika\Swastika.csproj">
-      <Project>{c4fbdca4-d0c6-4815-bff3-1a28738a4517}</Project>
-      <Name>Swastika</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EVoucher.Lib\EVoucher.Lib.csproj">
       <Project>{545776F4-4104-4532-BE1B-DD3B5E3697AD}</Project>
       <Name>EVoucher.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Swastiak.Identity\Swastia.Identity.csproj">
-      <Project>{bb83e332-836b-40d8-beea-96c9453f3801}</Project>
-      <Name>Swastia.Identity</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

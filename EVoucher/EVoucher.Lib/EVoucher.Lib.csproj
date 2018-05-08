@@ -55,6 +55,14 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Swastia.Identity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\plugins\Swastia.Identity.dll</HintPath>
+    </Reference>
+    <Reference Include="Swastika, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\plugins\Swastika.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -124,16 +132,6 @@
       <DependentUpon>EvoucherModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Swastika\Swastika-Heart\src\Swastika.Framework\Swastika\Swastika.csproj">
-      <Project>{c4fbdca4-d0c6-4815-bff3-1a28738a4517}</Project>
-      <Name>Swastika</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Swastiak.Identity\Swastia.Identity.csproj">
-      <Project>{BB83E332-836B-40D8-BEEA-96C9453F3801}</Project>
-      <Name>Swastia.Identity</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

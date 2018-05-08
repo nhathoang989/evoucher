@@ -47,12 +47,18 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
     };
 
     $scope.errors = []
+
     $scope.validate = function () {
 
     };
     $scope.openSearch = function () {
         $('#dlg-search').modal("show");
     };
+
+    $scope.setPage = function (page) {
+        $rootScope.page = page;
+    }
+
     $scope.loadRegister = function (register) {
         $scope.selected = register;
         $scope.errors = []
@@ -184,6 +190,49 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
                 $scope.request.toDate = null;
             }
             registerServices.getRegisters($scope.request).then(function (results) {
+                var resp = results.data;
+                if (resp.isSucceed) {
+                    $scope.data = resp.data;
+                    $scope.downloadLink = '';
+                    $("html, body").animate({ "scrollTop": "0px" }, 500);
+                    if ($scope.data.totalItems > 0) {
+                        $scope.selected = $scope.data.items[0];
+                    }
+                    else {
+                        $scope.selected = null;
+                        $scope.message = 'Kết quả tìm kiếm: Không tìm thấy mã số / Số điện thoại đã nhập';
+                        $scope.messageClass = 'warning';
+                    }
+                    $('#dlg-search').modal("hide");
+                }
+                $scope.isBusy = false;
+            }, function (error) {
+                $scope.isBusy = false;
+                //alert(error.data.message);
+            });
+        }
+    }
+    $scope.loadMyClaims= function (pageIndex) {       
+        $scope.isValid = $scope.request.keyword == '' || $.isNumeric($scope.request.keyword)
+        if (!$scope.isBusy && $scope.isValid) {
+            
+            $scope.isBusy = true;
+            if (pageIndex) {
+                $scope.request.pageIndex = pageIndex;
+            }
+            if (Date.parse($scope.dateRange.fromDate)) {
+                $scope.request.fromDate = new Date($scope.dateRange.fromDate).toISOString();
+            }
+            else {
+                $scope.request.fromDate = null;
+            }
+            if (Date.parse($scope.dateRange.toDate)) {
+                $scope.request.toDate = new Date($scope.dateRange.toDate).toISOString();
+            }
+            else {
+                $scope.request.toDate = null;
+            }
+            registerServices.getMyClaims($scope.request).then(function (results) {
                 var resp = results.data;
                 if (resp.isSucceed) {
                     $scope.data = resp.data;

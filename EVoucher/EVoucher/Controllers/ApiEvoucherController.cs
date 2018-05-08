@@ -136,7 +136,7 @@ namespace EVoucher.Controllers
                             PropertyName = "SendCodeStatus",
                             PropertyValue = register.SendCodeStatus
                         });
-                       
+
                         await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
                         result.Add(saveResult.Data);
                     }
@@ -234,6 +234,7 @@ namespace EVoucher.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         [Route("register/list")]
         public RepositoryResponse<PaginationModel<BSRegisterViewModel>> Registers(RequestPaging request)
@@ -247,7 +248,7 @@ namespace EVoucher.Controllers
             return users;
         }
 
-
+        [Authorize]
         [HttpPost]
         [Route("register/list/{claimed:int}")]
         public RepositoryResponse<PaginationModel<BSRegisterViewModel>> Registers(RequestPaging request, int claimed)
@@ -294,15 +295,15 @@ namespace EVoucher.Controllers
                r =>
                   r.Status != (int)SWStatus.Deleted &&
                   (
-                       (r.Code == request.Key)
-                  ||
-                   (r.Phone == request.Keyword)
+                    (r.Code == request.Key)
+                    || (r.Phone == request.Keyword)
                    );
             }
             return conditions;
 
         }
 
+        [Authorize]
         [HttpPost]
         [Route("register/export")]
         public RepositoryResponse<string> ExportRegisters(RequestPaging request)
@@ -333,6 +334,7 @@ namespace EVoucher.Controllers
         }
 
 
+        [Authorize]
         [HttpPost]
         [Route("register/export/{claimed:int}")]
         public RepositoryResponse<string> ExportRegisters(RequestPaging request, int claimed)
@@ -359,6 +361,7 @@ namespace EVoucher.Controllers
                 Data = SavedPath
             };
         }
+
 
         [HttpGet]
         [Route("init-register")]
@@ -412,6 +415,24 @@ namespace EVoucher.Controllers
                 Errors = errors
             };
 
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("register/my-claims")]
+        public RepositoryResponse<PaginationModel<BSRegisterViewModel>> GetMyClaims(RequestPaging request)
+        {
+            DateTime? from = request.FromDate.HasValue ? new DateTime(request.FromDate.Value.Year, request.FromDate.Value.Month, request.FromDate.Value.Day).ToUniversalTime()
+                : default(DateTime?);
+            DateTime? to = request.ToDate.HasValue ? new DateTime(request.ToDate.Value.Year, request.ToDate.Value.Month, request.ToDate.Value.Day).ToUniversalTime().AddDays(1)
+                : default(DateTime?);
+            var myClaims = ClaimProductViewModel.Repository.GetModelListBy(p => p.CreatedBy == User.Identity.Name);
+            if (myClaims.IsSucceed)
+            {
+                List<string> codes = myClaims.Data.Select(c => c.CodeVoucher).ToList();
+                return BSRegisterViewModel.Repository.GetModelListBy(r => codes.Any(c => c == r.Code), request.OrderBy, request.Direction, request.PageSize, request.PageIndex);
+            }
+            return new RepositoryResponse<PaginationModel<BSRegisterViewModel>>();
         }
 
 

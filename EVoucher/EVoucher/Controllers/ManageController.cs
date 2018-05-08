@@ -57,6 +57,12 @@ namespace EVoucher.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin,Manager")]
+        public ActionResult MyClaim()
+        {
+            return View();
+        }
+
         [Authorize(Roles ="Admin")]
         public ActionResult Managers()
         {

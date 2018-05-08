@@ -20,6 +20,20 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
         return commonServices.getApiResult(req);
     };
 
+    var _getMyClaims = function (request) {
+        var isClaimed = '';
+        if (request.isClaimed != 'null') {
+            isClaimed = '/' + request.isClaimed;
+        }
+        var req = {
+            method: 'POST',
+            url: apiUrl + 'register/my-claims',
+            data: request
+        };
+
+        return commonServices.getApiResult(req);
+    };
+
     var _importRegisters= function (strBase64) {
         var url = 'import-registers';
         var req = {
@@ -91,6 +105,7 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
     registersServiceFactory.submitRegister = _submitRegister;
     registersServiceFactory.exportRegisters = _exportRegisters;
     registersServiceFactory.getRegisters = _getRegisters;
+    registersServiceFactory.getMyClaims = _getMyClaims;
     registersServiceFactory.removeRegister = _removeRegister;
     return registersServiceFactory;
 

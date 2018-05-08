@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Claim";
+    ViewBag.Title = "Đổi sản phẩm";
     bool isAdmin = User.IsInRole("Admin");
 }
 <div class="row" ng-controller="registerController">
@@ -12,7 +12,7 @@
         <div ng-init="openSearch();" />
     }
     <div class="row">
-        <h2>Mã ưu đãi</h2>
+        <h2 class="col-lg-12">Mã ưu đãi</h2>
         <div class="col-lg-5">
             @if (isAdmin)
     {

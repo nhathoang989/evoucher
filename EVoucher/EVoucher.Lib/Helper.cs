@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EVoucher.Lib
@@ -30,15 +31,20 @@ namespace EVoucher.Lib
             message += "De biet them chi tiet quy khach vui long goi den hotline: 1900 54 54 68 de biet them chi tiet.\r\n";
             message += "Xin cam on.";
 
-            string account = "Bridgestonevn";
-            string passcode = "tvk2m";
+            string account = "bst_turanza";// "Bridgestonevn";
+            string passcode = "6p3ma";// "tvk2m";
             string serviceId = "Bridgestone";
+            //string url = $"http://cloudsms.vietguys.biz:8088/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}&bid=";
             string url = $"http://sms.vietguys.biz/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}";
             using (var client = new HttpClient())
             {
                 var tokenResponse = client.GetAsync(url).Result;
                 return await tokenResponse.Content.ReadAsStringAsync();
             }
+        }
+        public static bool IsPhoneNumber(string number)
+        {
+            return Regex.Match(number, @"[\d]").Success;
         }
         public async Task<string> PostMessage(string phone, string message)
         {
@@ -48,12 +54,12 @@ namespace EVoucher.Lib
             string url = "http://cloudsms.vietguys.biz:8088/webservices/sendsmsw.php?wsdl";
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
-                {"account", "Bridgestonevn"},
-                {"passcode", "tvk2m"},
+                {"account", "bst_turanza"},//"Bridgestonevn"
+                {"passcode", "6p3ma"},//"tvk2m"
                 {"service_id", "Bridgestone"},
                 {"phone", phone},
-                {"sms", message},
-                {"transactionid", "" }
+                {"sms", message}
+                //{"transactionid", "" }
             };
 
             return await PostDataAsync(url, data);

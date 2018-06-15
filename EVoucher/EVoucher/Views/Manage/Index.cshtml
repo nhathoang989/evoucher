@@ -15,40 +15,40 @@
         <h2 class="col-lg-12">Mã ưu đãi</h2>
         <div class="col-lg-5">
             @if (isAdmin)
-    {
-        <input type="file" class="inp-file-import d-inline" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" aria-describedby="basic-addon1">
-        <input type="hidden" id="hid-import-file" />
+            {
+                <input type="file" class="inp-file-import d-inline" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" aria-describedby="basic-addon1">
+                <input type="hidden" id="hid-import-file" />
 
 
-        <a data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-           ng-click="openSearch()" class="btn btn-info btn-sm">
-            Tìm kiếm
-        </a>
-        <a href="#" ng-click="loadImportRegisters()" class="btn btn-default btn-sm">Load</a>
-        <a href="#" ng-show="isImport " ng-click="importRegisters()" class="btn btn-success btn-sm">import</a>
-        <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-           ng-click="exportRegisters()" id="btn-search" class="btn btn-warning btn-sm">
-            Export
-        </a>
-        <a href="{{downloadLink}}" class="btn btn-sm btn-success" ng-show="downloadLink!=''">Tải xuống</a>
+                <a data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                   ng-click="openSearch()" class="btn btn-info btn-sm">
+                    Tìm kiếm
+                </a>
+                <a href="#" ng-click="loadImportRegisters()" class="btn btn-default btn-sm">Load</a>
+                <a href="#" ng-show="isImport " ng-click="importRegisters()" class="btn btn-success btn-sm">import</a>
+                <a type="button" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                   ng-click="exportRegisters()" id="btn-search" class="btn btn-warning btn-sm">
+                    Export
+                </a>
+                <a href="{{downloadLink}}" class="btn btn-sm btn-success" ng-show="downloadLink!=''">Tải xuống</a>
 
-}
+            }
             @if (!isAdmin)
-    {
-        <div ng-show="selected == null">
-            <p class="alert-{{messageClass}}">{{message}}</p>
-            <p>Nhập mã ưu đãi</p>
-            <input type="text" class="form-control" maxlength="6" ng-enter="loadRegisters(0)" ng-model="request.key" name="key" />
-            <p>Hoặc nhập số điện thoại</p>
-            <input type="text" class="form-control" pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
-                   ng-model="request.keyword" id="keyword" name="keyword" ng-enter="loadRegisters(0)" />
-            <p class="text-danger">(Số điện thoại ghi liền không cách nhau)</p>
-            <button type="button" ng-click="loadRegisters()" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
-                    id="btn-search" class="btn btn-info btn-sm">
-                Tìm kiếm
-            </button>
-        </div>
-}
+            {
+                <div ng-show="selected == null">
+                    <p class="alert-{{messageClass}}">{{message}}</p>
+                    <p>Nhập mã ưu đãi</p>
+                    <input type="text" class="form-control" maxlength="6" ng-enter="loadRegisters(0)" ng-model="request.key" name="key" />
+                    <p>Hoặc nhập số điện thoại</p>
+                    <input type="text" class="form-control" pattern="^[0-9]{10,11}$" maxlength="11" placeholder="0909090909"
+                           ng-model="request.keyword" id="keyword" name="keyword" ng-enter="loadRegisters(0)" />
+                    <p class="text-danger">(Số điện thoại ghi liền không cách nhau)</p>
+                    <button type="button" ng-click="loadRegisters()" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Searching"
+                            id="btn-search" class="btn btn-info btn-sm">
+                        Tìm kiếm
+                    </button>
+                </div>
+            }
         </div>
         <div class="col-lg-7">
             <div class="alert alert-success" style="display:none;" id="message">
@@ -65,19 +65,32 @@
                     <label class="control-label">
                         Họ tên:
                     </label>
-                    <span ng-bind="selected.fullname" />
+                    <input class="form-control" ng-model="selected.fullname" ng-if="selected.isEditName"
+                           placeholder="Họ tên" />
+                    <span ng-bind="selected.fullname" ng-if="!selected.isEditName" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">
                         Mã ưu đãi:
                     </label>
-                    <span ng-bind="selected.code" />
+                    <span ng-bind="selected.code"></span>
                 </div>
                 <div class="form-group">
                     <label class="control-label">
                         Thông tin xe:
                     </label>
-                    <span ng-bind="selected.manufacturer" /> - <span ng-bind="selected.automaker" /> -<span ng-bind="selected.carModel" /> -<span ng-bind="selected.license" />
+                    <input class="form-control" ng-model="selected.manufacturer"
+                           ng-if="selected.isEditManufacturer" placeholder="Nhà sản xuất" />
+                    <span ng-bind="selected.manufacturer" ng-if="!selected.isEditManufacturer"></span> -
+                    <input class="form-control" ng-model="selected.automaker" ng-if="selected.isEditAutomaker" placeholder="Nhãn hiệu" />
+                    <span ng-bind="selected.automaker" ng-if="!selected.isEditAutomaker"></span> -
+                    <input class="form-control" ng-model="selected.carModel" ng-if="selected.isEditCarModel" placeholder="Đời xe" />
+                    <span ng-bind="selected.carModel" ng-if="!selected.isEditCarModel"></span> -
+                    <input class="form-control" ng-model="selected.license" ng-if="selected.isEditLicense" placeholder="Biển Số" />
+                    <span ng-bind="selected.license" ng-if="!selected.isEditLicense"></span>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-success" ng-click="saveRegister(selected)">Cập nhật</a>
                 </div>
                 <div class="form-group">
                     <label class="control-label">
@@ -279,19 +292,30 @@
                         <label class="control-label">
                             Họ tên:
                         </label>
-                        <span ng-bind="selected.fullname" />
+                        <input ng-model="selected.fullname" />
                     </div>
                     <div class="form-group">
                         <label class="control-label">
                             Mã ưu đãi:
                         </label>
-                        <span ng-bind="selected.code" />
+                        <input ng-model="selected.code" />
                     </div>
                     <div class="form-group">
                         <label class="control-label">
                             Thông tin xe:
                         </label>
-                        <span>{{selected.manufacturer}} - {{selected.automaker}} - {{selected.carModel}} - {{selected.license}}</span>
+                        <input class="form-control" ng-model="selected.manufacturer"
+                               ng-if="selected.isEditManufacturer" placeholder="Nhà sản xuất" />
+                        <span ng-bind="selected.manufacturer" ng-if="!selected.isEditManufacturer"></span> -
+                        <input class="form-control" ng-model="selected.automaker" ng-if="selected.isEditAutomaker" placeholder="Nhãn hiệu" />
+                        <span ng-bind="selected.automaker" ng-if="!selected.isEditAutomaker"></span> -
+                        <input class="form-control" ng-model="selected.carModel" ng-if="selected.isEditCarModel" placeholder="Đời xe" />
+                        <span ng-bind="selected.carModel" ng-if="!selected.isEditCarModel"></span> -
+                        <input class="form-control" ng-model="selected.license" ng-if="selected.isEditLicense" placeholder="Biển Số" />
+                        <span ng-bind="selected.license" ng-if="!selected.isEditLicense"></span>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-success" ng-click="saveRegister(selected)">Cập nhật</a>
                     </div>
                     <div class="form-group">
                         <label class="control-label">

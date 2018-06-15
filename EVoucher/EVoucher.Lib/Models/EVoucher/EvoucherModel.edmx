@@ -97,6 +97,7 @@
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime" />
           <Property Name="SendCodeDate" Type="datetime" />
+          <Property Name="From" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -295,6 +296,7 @@
           <Property Name="Status" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="SendCodeDate" Type="DateTime" Precision="3" />
+          <Property Name="From" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Type="EvoucherModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
@@ -407,6 +409,7 @@
           <EntitySetMapping Name="BridgeStone_Register">
             <EntityTypeMapping TypeName="EvoucherModel.BridgeStone_Register">
               <MappingFragment StoreEntitySet="BridgeStone_Register">
+                <ScalarProperty Name="From" ColumnName="From" />
                 <ScalarProperty Name="SendCodeDate" ColumnName="SendCodeDate" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="Status" ColumnName="Status" />

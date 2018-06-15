@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVoucher", "EVoucher\EVouch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVoucher.Lib", "EVoucher.Lib\EVoucher.Lib.csproj", "{545776F4-4104-4532-BE1B-DD3B5E3697AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swastika", "..\..\Swastika\Swastika-Heart\src\Swastika.Framework\Swastika\Swastika.csproj", "{C4FBDCA4-D0C6-4815-BFF3-1A28738A4517}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{545776F4-4104-4532-BE1B-DD3B5E3697AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{545776F4-4104-4532-BE1B-DD3B5E3697AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{545776F4-4104-4532-BE1B-DD3B5E3697AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4FBDCA4-D0C6-4815-BFF3-1A28738A4517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4FBDCA4-D0C6-4815-BFF3-1A28738A4517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4FBDCA4-D0C6-4815-BFF3-1A28738A4517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4FBDCA4-D0C6-4815-BFF3-1A28738A4517}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

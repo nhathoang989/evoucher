@@ -3,15 +3,19 @@
     Layout = "/Views/Shared/_Layout_BridgeStone.cshtml";
 }
 
+ <div class="banner o-2-m o-3-d">
+            <img class="banner-img" src="/Content/images/banner-1.jpg" alt="Turanza Evoucher">
+        </div>
 <div ng-controller="registerController"
      class="register-content inner-content o-3-m o-2-d">
     <div class="loader-container" ng-show="isBusy">
         <div id="loader"></div>
     </div>
 
-    <h1 class="title">ĐĂNG KÝ THAM GIA CHƯƠNG TRÌNH</h1>
+    <h1 class="title">ĐĂNG KÝ THAM GIA CHƯƠNG TRÌNH: HÈ
+NHƯ Ý - XĂNG MIỄN PHÍ</h1>
     <h2 class="sub-title">
-        Ưu đãi 300.000 VND phí dịch vụ khi mua
+        Tặng thẻ xăng trị giá 300.000 VND khi mua
         <br>02 lốp xe du lịch cao cấp
         <a href="/">TURANZA GR100</a>
     </h2>
@@ -42,10 +46,10 @@
             <label for="manufacturer">Nhà sản xuất xe bạn đang sử dụng...</label>
             <input id="manufacturer" required ng-model="register.manufacturer" ng-change="validate()" placeholder="Toyota, Honda, Kia...">
         </p>
-        <p>
+        @*<p>
             <label for="automaker">Nhãn hiệu xe bạn đang sử dụng...</label>
             <input id="automaker" required ng-model="register.automaker" ng-change="validate()" placeholder="Camry, Vios...">
-        </p>
+        </p>*@
         <p>
             <label for="model">Đời xe</label>
             <input id="model" required ng-model="register.carModel" ng-change="validate()" placeholder="2016, 2017...">

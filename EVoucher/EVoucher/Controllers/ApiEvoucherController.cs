@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using static Swastika.Common.Utility.Enums;
@@ -376,13 +377,21 @@ namespace EVoucher.Controllers
         {
             List<string> errors = new List<string>();
             if (model != null && !string.IsNullOrEmpty(model.Phone)
-                && !BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == model.Phone && r.Status != (int)SWStatus.Deleted))
+                &&
+                (!BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == model.Phone && r.Status != (int)SWStatus.Deleted)
+                || model.Id > 0
+                )
+                )
             {
-                model.Code = BSHelper.GenerateCode();
-
-                while (BSRegisterViewModel.Repository.CheckIsExists(r => r.Code == model.Code))
+                if (!string.IsNullOrEmpty(model.Code))
                 {
+
                     model.Code = BSHelper.GenerateCode();
+
+                    while (BSRegisterViewModel.Repository.CheckIsExists(r => r.Code == model.Code))
+                    {
+                        model.Code = BSHelper.GenerateCode();
+                    }
                 }
 
                 model.SendCodeStatus = "-1";
@@ -415,6 +424,87 @@ namespace EVoucher.Controllers
                 Errors = errors
             };
 
+        }
+
+        [HttpGet]
+        [Route("register")]
+        public async Task<HttpResponseMessage> Register(string phone, string usr, string pwd)
+        {
+            //var result = await SignInManager.PasswordSignInAsync(usr, pwd,true, shouldLockout: false);\
+            if (usr == "vietguys" && pwd == "4BbbQB67")
+            {
+                List<string> errors = new List<string>();
+                if (!BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == phone && r.Status != (int)SWStatus.Deleted))
+                {
+                    if (!string.IsNullOrEmpty(phone)
+                    && BSHelper.IsPhoneNumber(phone))
+                    {
+
+                        BSRegisterViewModel model = new BSRegisterViewModel();
+                        model.Phone = phone;
+                        model.From = "sms";
+                        model.Code = BSHelper.GenerateCode();
+
+                        while (BSRegisterViewModel.Repository.CheckIsExists(r => r.Code == model.Code))
+                        {
+                            model.Code = BSHelper.GenerateCode();
+                        }
+
+                        model.SendCodeStatus = "-1";
+                        model.SendCodeDate = DateTime.UtcNow;
+                        var register = Mapper.Map<BSRegisterViewModel>(model);
+                        register.Status = SWStatus.Preview;
+                        var saveResult = await register.SaveModelAsync();
+                        if (saveResult.IsSucceed)
+                        {
+                            register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                            var fields = new List<EntityField>();
+                            fields.Add(new EntityField()
+                            {
+                                PropertyName = "SendCodeStatus",
+                                PropertyValue = register.SendCodeStatus
+                            });
+                            await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
+                            return new HttpResponseMessage()
+                            {
+                                StatusCode = System.Net.HttpStatusCode.OK
+                            };
+                        }
+                        else
+                        {
+                            return new HttpResponseMessage()
+                            {
+                                StatusCode = System.Net.HttpStatusCode.BadRequest
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new HttpResponseMessage()
+                        {
+                            StatusCode = System.Net.HttpStatusCode.BadRequest,
+                            Content = new StringContent("Số điện thoại không hợp lệ")
+                        };
+                    }
+                }
+                else
+                {
+                    return new HttpResponseMessage()
+                    {
+                        StatusCode = System.Net.HttpStatusCode.BadRequest,
+                        Content = new StringContent("Số điện thoại này đã được đăng ký")
+                    };
+                    //return BadRequest("Số điện thoại này đã được đăng ký");
+                }
+
+            }
+            else
+            {
+                return new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+            }
         }
 
         [Authorize]

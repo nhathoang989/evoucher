@@ -105,6 +105,29 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
         }
     }
 
+    $scope.saveRegister = function (register) {
+        $scope.isBusy = true;
+        registerServices.submitRegister(register).then(function (results) {
+            var resp = results.data;
+            if (resp.isSucceed) {
+                alert("Thành công");
+                selected.isEditName = !selected.fullname;
+                selected.isEditManufacturer = !selected.manufacturer;
+                selected.isEditAutomaker = !selected.automaker;
+                selected.isEditCarModel = !selected.carModel;
+                selected.isEditLicense = !selected.license;
+            }
+            else {
+                $scope.errors = resp.errors;
+            }
+            $scope.isBusy = false;
+        }, function (error) {
+            $scope.isBusy = false;
+            //alert(error.data.message);
+        });
+
+    }
+
     $scope.importRegisters = function () {
         $scope.base64 = $('#hid-import-file').val();
         if ($scope.base64) {
@@ -168,11 +191,10 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
         }
     }
 
-
-    $scope.loadRegisters = function (pageIndex, btn) {       
+    $scope.loadRegisters = function (pageIndex, btn) {
         $scope.isValid = $scope.request.keyword == '' || $.isNumeric($scope.request.keyword)
         if (!$scope.isBusy && $scope.isValid) {
-            
+
             $scope.isBusy = true;
             if (pageIndex) {
                 $scope.request.pageIndex = pageIndex;
@@ -196,6 +218,13 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
                     $scope.downloadLink = '';
                     $("html, body").animate({ "scrollTop": "0px" }, 500);
                     if ($scope.data.totalItems > 0) {
+                        angular.forEach($scope.data.items, function (value, key) {
+                            value.isEditName = !value.fullname;
+                            value.isEditManufacturer = !value.manufacturer;
+                            value.isEditAutomaker = !value.automaker;
+                            value.isEditCarModel = !value.carModel;
+                            value.isEditLicense = !value.license;
+                        });
                         $scope.selected = $scope.data.items[0];
                     }
                     else {
@@ -212,10 +241,10 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
             });
         }
     }
-    $scope.loadMyClaims= function (pageIndex) {       
+    $scope.loadMyClaims = function (pageIndex) {
         $scope.isValid = $scope.request.keyword == '' || $.isNumeric($scope.request.keyword)
         if (!$scope.isBusy && $scope.isValid) {
-            
+
             $scope.isBusy = true;
             if (pageIndex) {
                 $scope.request.pageIndex = pageIndex;

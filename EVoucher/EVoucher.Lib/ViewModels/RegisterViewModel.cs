@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using EVoucher.Lib.Models;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVoucher.Lib.ViewModels
 {
@@ -20,6 +21,7 @@ namespace EVoucher.Lib.ViewModels
         public int Id { get; set; }
         [JsonProperty("fullname")]
         public string Fullname { get; set; }
+        [Phone]
         [JsonProperty("phone")]
         public string Phone { get; set; }
         [JsonProperty("manufacturer")]
@@ -34,6 +36,8 @@ namespace EVoucher.Lib.ViewModels
         public System.DateTime CreatedDate { get; set; }
         [JsonProperty("code")]
         public string Code { get; set; }
+        [JsonProperty("from")]
+        public string From { get; set; }
         [JsonProperty("sendCodeStatus")]
         public string SendCodeStatus { get; set; }
         [JsonProperty("updatedDate")]

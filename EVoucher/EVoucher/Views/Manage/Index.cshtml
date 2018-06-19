@@ -292,13 +292,15 @@
                         <label class="control-label">
                             Họ tên:
                         </label>
-                        <input ng-model="selected.fullname" />
+                        <input class="form-control" ng-model="selected.fullname" ng-if="selected.isEditName"
+                           placeholder="Họ tên" />
+                    <span ng-bind="selected.fullname" ng-if="!selected.isEditName" />
                     </div>
                     <div class="form-group">
                         <label class="control-label">
                             Mã ưu đãi:
                         </label>
-                        <input ng-model="selected.code" />
+                        <span ng-bind="selected.code"></span>
                     </div>
                     <div class="form-group">
                         <label class="control-label">

@@ -90,6 +90,16 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
         return commonServices.getApiResult(req);
     };
 
+    var _updateRegister = function (register) {
+        var req = {
+            method: 'POST',
+            url: apiUrl + 'register/update',
+            data: JSON.stringify(register)
+        };
+
+        return commonServices.getApiResult(req);
+    };
+
     var _claimProduct = function (claim) {
         var req = {
             method: 'POST',
@@ -103,6 +113,7 @@ app.factory('registerServices', ['$http', 'commonServices', function ($http, com
     registersServiceFactory.importRegisters = _importRegisters;
     registersServiceFactory.claimProduct = _claimProduct;
     registersServiceFactory.submitRegister = _submitRegister;
+    registersServiceFactory.updateRegister = _updateRegister;
     registersServiceFactory.exportRegisters = _exportRegisters;
     registersServiceFactory.getRegisters = _getRegisters;
     registersServiceFactory.getMyClaims = _getMyClaims;

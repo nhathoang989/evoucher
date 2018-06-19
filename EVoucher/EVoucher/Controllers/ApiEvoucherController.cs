@@ -424,6 +424,40 @@ namespace EVoucher.Controllers
 
         }
 
+        [HttpPost]
+        [Route("register/update")]
+        public async Task<RepositoryResponse<BSRegisterViewModel>> updateRegisterAsync(Register model)
+        {
+            List<string> errors = new List<string>();
+            if (string.IsNullOrEmpty(model.Code))
+            {
+
+                model.Code = BSHelper.GenerateCode();
+
+                while (BSRegisterViewModel.Repository.CheckIsExists(r => r.Code == model.Code))
+                {
+                    model.Code = BSHelper.GenerateCode();
+                }
+            }
+
+            var register = Mapper.Map<BSRegisterViewModel>(model);
+            register.Status = SWStatus.Preview;
+            var saveResult = await register.SaveModelAsync();
+            if (saveResult.IsSucceed)
+            {
+                var fields = new List<EntityField>();
+                fields.Add(new EntityField()
+                {
+                    PropertyName = "SendCodeStatus",
+                    PropertyValue = register.SendCodeStatus
+                });
+
+                await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
+            }
+            return saveResult;
+
+        }
+
         [HttpGet]
         [Route("register")]
         public async Task<ApiResponse> Register(string phone, string usr, string pwd, string bid)
@@ -477,7 +511,7 @@ namespace EVoucher.Controllers
                     case -2:
                     case -3:
                     default:
-                        result.SendCodeStatus = await BSHelper.SendMessage(status, phone, string.Empty,bid);
+                        result.SendCodeStatus = await BSHelper.SendMessage(status, phone, string.Empty, bid);
                         return result;
                 }
 

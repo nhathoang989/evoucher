@@ -107,15 +107,15 @@ app.controller('registerController', ['$scope', '$rootScope', '$timeout', '$loca
 
     $scope.saveRegister = function (register) {
         $scope.isBusy = true;
-        registerServices.submitRegister(register).then(function (results) {
+        registerServices.updateRegister(register).then(function (results) {
             var resp = results.data;
             if (resp.isSucceed) {
                 alert("Thành công");
-                selected.isEditName = !selected.fullname;
-                selected.isEditManufacturer = !selected.manufacturer;
-                selected.isEditAutomaker = !selected.automaker;
-                selected.isEditCarModel = !selected.carModel;
-                selected.isEditLicense = !selected.license;
+                $scope.selected.isEditName = !$scope.selected.fullname;
+                $scope.selected.isEditManufacturer = !$scope.selected.manufacturer;
+                $scope.selected.isEditAutomaker = !$scope.selected.automaker;
+                $scope.selected.isEditCarModel = !$scope.selected.carModel;
+                $scope.selected.isEditLicense = !$scope.selected.license;
             }
             else {
                 $scope.errors = resp.errors;

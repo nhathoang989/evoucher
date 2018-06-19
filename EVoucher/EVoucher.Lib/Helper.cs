@@ -1,10 +1,12 @@
-﻿using System;
+﻿using EVoucher.Lib.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Swastika.Common.Utility.Enums;
 
 namespace EVoucher.Lib
 {
@@ -21,19 +23,13 @@ namespace EVoucher.Lib
             }
             return result;
         }
-        public static async Task<string> SendMessage(string phone, string code)
+        public static async Task<string> SendMessage(int status, string phone, string code)
         {
-            string message = $"Bridgestone Việt Nam \r\n";
-            message += "Quy khach vua dang ki chuong trinh Khuyen mai cua Bridgestone.\r\n";
-            message += $"Mã ưu đãi: {code}\r\n";
-            message += "Co gia tri giam 300 nghin dong tren phi dich vu khi mua 02 lop Turanza GR100 tai he thong B-select, B-shop cua Bridgestone tren ca nuoc.\r\n";
-            message += "Ma uu dai co Hieu luc tu 15/04 den 30/04/2018\r\n";
-            message += "De biet them chi tiet quy khach vui long goi den hotline: 1900 54 54 68 de biet them chi tiet.\r\n";
-            message += "Xin cam on.";
+            string message = GetMessage(status, phone, code);
 
             string account = "bst_turanza";// "Bridgestonevn";
             string passcode = "6p3ma";// "tvk2m";
-            string serviceId = "Bridgestone";
+            string serviceId = status == 0 ? "Bridgestone" : "6067";
             //string url = $"http://cloudsms.vietguys.biz:8088/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}&bid=";
             string url = $"http://sms.vietguys.biz/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}";
             using (var client = new HttpClient())
@@ -42,6 +38,66 @@ namespace EVoucher.Lib
                 return await tokenResponse.Content.ReadAsStringAsync();
             }
         }
+
+        public static string GetMessage(int status, string phone, string code)
+        {
+            DateTime startDate = new DateTime(2018, 06, 20);
+            DateTime endDate = new DateTime(2018, 07, 20);
+            string message = string.Empty;
+            switch (status)
+            {
+                case 0:
+                    message = $"Bridgestone Viet Nam gui ban ma: {code}. " +
+                        $"Ma co gia tri quy doi 01 the xang Flexicard tri gia 300K khi mua 02 lop Turanza GR100 " +
+                        $"tai he thong dai ly cua Bridgestone tren toan quoc. Hieu luc den { endDate.ToString("dd/MM/yyyy") }. " +
+                        $"Hotline: 1900545468";
+                    break;
+                case -1:
+                    message = $"Thoi gian tham du chuong trinh XXX se bat dau tu ngay " +
+                        $"{ startDate.ToString("dd/MM/yyyy") } den ngay { endDate.ToString("dd/MM/yyyy") }. " +
+                        $"Moi thac mac xin lien he 1800xxxx. Xin cam on.";
+                    break;
+                case -2:
+                    var register = BSRegisterViewModel.Repository.GetSingleModel(m => m.Phone == phone && m.Status != (int)SWStatus.Deleted).Data;
+                    message = $"SDT cua Quy khach da duoc su dung tham gia chuong " +
+                        $"trinh ngay { register?.CreatedDate.ToString("dd/MM") } va khong the tiep tuc tham gia. " +
+                        $"Cam on Quy khach da dong hanh cung Bridgestone. LH:1900545468";
+                    break;
+                case -3:
+                    message = $"Chuong trinh tang the xang 300K khi mua 02 lop Turanza GR100 " +
+                        $"da ket thuc tu ngay { endDate.ToString("dd/MM/yyyy") }. " +
+                        $"Cam on Quy khach da dong hanh cung Bridgestone. Hotline 1900545468";
+                    break;
+                default:
+                    message = $"Nhà mạng sẽ tự động gửi nội dung thông báo cú pháp sai (KH không thể điều chỉnh nội dung này). " +
+                        $"Đồng thời, M&C cũng không có báo cáo / thông tin về các tin này";
+                    break;
+            }
+            return message;
+        }
+        public static int ValidateRegister(string phone)
+        {
+            DateTime startDate = new DateTime(2018, 06, 20);
+            DateTime endDate = new DateTime(2018, 07, 20);
+            if (DateTime.Now < startDate)
+            {
+                return -1;
+            }
+            if (DateTime.Now > endDate)
+            {
+                return -3;
+            }
+            if (BSHelper.IsPhoneNumber(phone))
+            {
+                return -4;
+            }
+            if (BSRegisterViewModel.Repository.CheckIsExists(m => m.Phone.Contains(phone) && m.Status != (int)SWStatus.Deleted))
+            {
+                return -2;
+            }
+            return 0;
+        }
+
         public static bool IsPhoneNumber(string number)
         {
             return Regex.Match(number, @"[\d]").Success;

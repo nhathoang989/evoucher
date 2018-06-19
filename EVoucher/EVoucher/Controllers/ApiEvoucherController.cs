@@ -77,6 +77,7 @@ namespace EVoucher.Controllers
                     Address = strUser[3]
                 };
                 var result = await UserManager.CreateAsync(user, password);
+                await UserManager.AddToRoleAsync(user.Id, "Manager");
                 isSucceed = isSucceed && result.Succeeded;
             }
             if (isSucceed)
@@ -113,9 +114,8 @@ namespace EVoucher.Controllers
                     Automaker = strUser[4],
                     CarModel = strUser[5]
                 };
-
-                if (!string.IsNullOrEmpty(register.Phone)
-                && !BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == register.Phone && r.Status != (int)SWStatus.Deleted))
+                int status = BSHelper.ValidateRegister(register.Phone);
+                if (status == 0)
                 {
                     register.Code = BSHelper.GenerateCode();
 
@@ -130,7 +130,7 @@ namespace EVoucher.Controllers
                     var saveResult = await register.SaveModelAsync();
                     if (saveResult.IsSucceed)
                     {
-                        register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                        register.SendCodeStatus = await BSHelper.SendMessage(status, register.Phone, register.Code);
                         var fields = new List<EntityField>();
                         fields.Add(new EntityField()
                         {
@@ -149,7 +149,8 @@ namespace EVoucher.Controllers
                 }
                 else
                 {
-                    errors.Add($"Số điện thoại { register.Phone } đã được đăng ký");
+                    string err = BSHelper.GetMessage(status, register.Phone, string.Empty);
+                    errors.Add(err);
                 }
 
             }
@@ -376,14 +377,10 @@ namespace EVoucher.Controllers
         public async Task<RepositoryResponse<BSRegisterViewModel>> SubmitRegisterAsync(Register model)
         {
             List<string> errors = new List<string>();
-            if (model != null && !string.IsNullOrEmpty(model.Phone)
-                &&
-                (!BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == model.Phone && r.Status != (int)SWStatus.Deleted)
-                || model.Id > 0
-                )
-                )
+            int status = BSHelper.ValidateRegister(model?.Phone);
+            if (status ==0)
             {
-                if (!string.IsNullOrEmpty(model.Code))
+                if (string.IsNullOrEmpty(model.Code))
                 {
 
                     model.Code = BSHelper.GenerateCode();
@@ -397,11 +394,11 @@ namespace EVoucher.Controllers
                 model.SendCodeStatus = "-1";
                 model.SendCodeDate = DateTime.UtcNow;
                 var register = Mapper.Map<BSRegisterViewModel>(model);
-                register.Status = SWStatus.Preview;
+                register.Status = SWStatus.Preview;                
                 var saveResult = await register.SaveModelAsync();
                 if (saveResult.IsSucceed)
                 {
-                    register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                    register.SendCodeStatus = await BSHelper.SendMessage(status, register.Phone, register.Code);
                     var fields = new List<EntityField>();
                     fields.Add(new EntityField()
                     {
@@ -415,7 +412,8 @@ namespace EVoucher.Controllers
             }
             else
             {
-                errors.Add("Số điện thoại này đã được đăng ký");
+                string err = BSHelper.GetMessage(status, model.Phone, string.Empty);
+                errors.Add(err);
             }
             return new RepositoryResponse<BSRegisterViewModel>()
             {
@@ -428,18 +426,19 @@ namespace EVoucher.Controllers
 
         [HttpGet]
         [Route("register")]
-        public async Task<HttpResponseMessage> Register(string phone, string usr, string pwd)
+        public async Task<ApiResponse> Register(string phone, string usr, string pwd)
         {
             //var result = await SignInManager.PasswordSignInAsync(usr, pwd,true, shouldLockout: false);\
             if (usr == "vietguys" && pwd == "4BbbQB67")
             {
                 List<string> errors = new List<string>();
-                if (!BSRegisterViewModel.Repository.CheckIsExists(r => r.Phone == phone && r.Status != (int)SWStatus.Deleted))
+                int status = BSHelper.ValidateRegister(phone);
+                string errorMsg = string.Empty;
+                ApiResponse result = new ApiResponse();
+                result.Status = status;
+                switch (status)
                 {
-                    if (!string.IsNullOrEmpty(phone)
-                    && BSHelper.IsPhoneNumber(phone))
-                    {
-
+                    case 0:
                         BSRegisterViewModel model = new BSRegisterViewModel();
                         model.Phone = phone;
                         model.From = "sms";
@@ -457,7 +456,8 @@ namespace EVoucher.Controllers
                         var saveResult = await register.SaveModelAsync();
                         if (saveResult.IsSucceed)
                         {
-                            register.SendCodeStatus = await BSHelper.SendMessage(register.Phone, register.Code);
+                            register.SendCodeStatus = await BSHelper.SendMessage(status, register.Phone, register.Code);
+                            result.SendCodeStatus = register.SendCodeStatus;
                             var fields = new List<EntityField>();
                             fields.Add(new EntityField()
                             {
@@ -465,44 +465,27 @@ namespace EVoucher.Controllers
                                 PropertyValue = register.SendCodeStatus
                             });
                             await BSRegisterViewModel.Repository.UpdateFieldsAsync(r => r.Id == saveResult.Data.Model.Id, fields);
-                            return new HttpResponseMessage()
-                            {
-                                StatusCode = System.Net.HttpStatusCode.OK
-                            };
+                            result.Status = 0;
                         }
                         else
                         {
-                            return new HttpResponseMessage()
-                            {
-                                StatusCode = System.Net.HttpStatusCode.BadRequest
-                            };
+                            result.Status = 400;
                         }
-                    }
-                    else
-                    {
-                        return new HttpResponseMessage()
-                        {
-                            StatusCode = System.Net.HttpStatusCode.BadRequest,
-                            Content = new StringContent("Số điện thoại không hợp lệ")
-                        };
-                    }
-                }
-                else
-                {
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = System.Net.HttpStatusCode.BadRequest,
-                        Content = new StringContent("Số điện thoại này đã được đăng ký")
-                    };
-                    //return BadRequest("Số điện thoại này đã được đăng ký");
+                        return result;
+                    case -1:
+                    case -2:
+                    case -3:
+                    default:
+                        result.SendCodeStatus = await BSHelper.SendMessage(status, phone, string.Empty);
+                        return result;
                 }
 
             }
             else
             {
-                return new HttpResponseMessage()
+                return new ApiResponse()
                 {
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                    Status = 400
                 };
             }
         }
@@ -574,8 +557,15 @@ namespace EVoucher.Controllers
                 Errors = errors
             };
         }
-    }
 
+    }
+    public class ApiResponse
+    {
+        [JsonProperty("status")]
+        public int Status { get; set; }
+        [JsonProperty("sendCodeStatus")]
+        public string SendCodeStatus { get; set; }
+    }
     public class ImportUsers
     {
         [JsonProperty("strBase64")]

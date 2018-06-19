@@ -76,25 +76,36 @@ namespace EVoucher.Lib
             }
             return HttpUtility.UrlEncode(message);
         }
+        public static string ParsePhone(string phone)
+        {
+            string result = string.Empty;
+            if (!string.IsNullOrEmpty(phone))
+            {
+
+                if (phone[0] == '0')
+                {
+                    result = phone.Substring(1);
+                }
+                else
+                {
+                    if (phone[0] == '8')
+                    {
+                        result = phone.Substring(2);
+                    }
+                    else if (phone[0] == '+')
+                    {
+                        result = phone.Substring(3);
+                    }
+                }
+            }
+            return result;
+        }
         public static int ValidateRegister(string phone)
         {
+            
             DateTime startDate = new DateTime(2018, 06, 19);
             DateTime endDate = new DateTime(2018, 07, 20);
-            if (phone[0]=='0')
-            {
-                phone = phone.Substring(1);
-            }
-            else
-            {
-                if (phone[0]=='8')
-                {
-                    phone = phone.Substring(2);
-                }
-                else if(phone[0]=='+')
-                {
-                    phone = phone.Substring(3);
-                }
-            }
+
             if (DateTime.Now < startDate)
             {
                 return -1;
@@ -107,7 +118,7 @@ namespace EVoucher.Lib
             {
                 return -4;
             }
-            if (BSRegisterViewModel.Repository.CheckIsExists(m => m.Phone.Contains(phone) && m.Status != (int)SWStatus.Deleted))
+            if (BSRegisterViewModel.Repository.CheckIsExists(m => m.Phone.Contains(ParsePhone(phone)) && m.Status != (int)SWStatus.Deleted))
             {
                 return -2;
             }

@@ -273,6 +273,7 @@ namespace EVoucher.Controllers
             DateTime? to = request.ToDate.HasValue ? new DateTime(request.ToDate.Value.Year, request.ToDate.Value.Month, request.ToDate.Value.Day).ToUniversalTime().AddDays(1)
                 : default(DateTime?);
             bool isAdmin = User.IsInRole("Admin");
+            string phone = BSHelper.ParsePhone(request.Keyword);
             Expression<Func<BridgeStone_Register, bool>> conditions;
             if (isAdmin)
             {
@@ -282,7 +283,7 @@ namespace EVoucher.Controllers
                   (
                        (string.IsNullOrEmpty(request.Key) || r.Code == request.Key)
                   &&
-                   (string.IsNullOrEmpty(request.Keyword) || r.Phone == request.Keyword)
+                   (string.IsNullOrEmpty(request.Keyword) || r.Phone.Contains(phone))
                   && (!from.HasValue
                    || (r.CreatedDate >= from.Value)
                    )
@@ -298,7 +299,7 @@ namespace EVoucher.Controllers
                   r.Status != (int)SWStatus.Deleted &&
                   (
                     (r.Code == request.Key)
-                    || (r.Phone == request.Keyword)
+                    || (r.Phone.Contains(phone))
                    );
             }
             return conditions;

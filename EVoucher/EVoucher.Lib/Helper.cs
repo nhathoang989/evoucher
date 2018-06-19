@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using static Swastika.Common.Utility.Enums;
 
 namespace EVoucher.Lib
@@ -23,15 +24,15 @@ namespace EVoucher.Lib
             }
             return result;
         }
-        public static async Task<string> SendMessage(int status, string phone, string code)
+        public static async Task<string> SendMessage(int status, string phone, string code, string bid = null)
         {
             string message = GetMessage(status, phone, code);
 
             string account = "bst_turanza";// "Bridgestonevn";
             string passcode = "6p3ma";// "tvk2m";
             string serviceId = status == 0 ? "Bridgestone" : "6067";
-            //string url = $"http://cloudsms.vietguys.biz:8088/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}&bid=";
-            string url = $"http://sms.vietguys.biz/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}";
+            string url = $"http://cloudsms.vietguys.biz:8088/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}&bid={bid}";
+            //string url = $"http://sms.vietguys.biz/api/?u={account}&pwd={passcode}&from={serviceId}&phone={phone}&sms={message}&bid={bid}";
             using (var client = new HttpClient())
             {
                 var tokenResponse = client.GetAsync(url).Result;
@@ -41,7 +42,7 @@ namespace EVoucher.Lib
 
         public static string GetMessage(int status, string phone, string code)
         {
-            DateTime startDate = new DateTime(2018, 06, 20);
+            DateTime startDate = new DateTime(2018, 06, 19);
             DateTime endDate = new DateTime(2018, 07, 20);
             string message = string.Empty;
             switch (status)
@@ -53,9 +54,9 @@ namespace EVoucher.Lib
                         $"Hotline: 1900545468";
                     break;
                 case -1:
-                    message = $"Thoi gian tham du chuong trinh XXX se bat dau tu ngay " +
+                    message = $"Thoi gian tham du chuong trinh Turanza se bat dau tu ngay " +
                         $"{ startDate.ToString("dd/MM/yyyy") } den ngay { endDate.ToString("dd/MM/yyyy") }. " +
-                        $"Moi thac mac xin lien he 1800xxxx. Xin cam on.";
+                        $"Moi thac mac xin lien he 1900545468. Xin cam on.";
                     break;
                 case -2:
                     var register = BSRegisterViewModel.Repository.GetSingleModel(m => m.Phone == phone && m.Status != (int)SWStatus.Deleted).Data;
@@ -73,12 +74,27 @@ namespace EVoucher.Lib
                         $"Đồng thời, M&C cũng không có báo cáo / thông tin về các tin này";
                     break;
             }
-            return message;
+            return HttpUtility.UrlEncode(message);
         }
         public static int ValidateRegister(string phone)
         {
-            DateTime startDate = new DateTime(2018, 06, 20);
+            DateTime startDate = new DateTime(2018, 06, 19);
             DateTime endDate = new DateTime(2018, 07, 20);
+            if (phone[0]=='0')
+            {
+                phone = phone.Substring(1);
+            }
+            else
+            {
+                if (phone[0]=='8')
+                {
+                    phone = phone.Substring(2);
+                }
+                else if(phone[0]=='+')
+                {
+                    phone = phone.Substring(3);
+                }
+            }
             if (DateTime.Now < startDate)
             {
                 return -1;
@@ -87,7 +103,7 @@ namespace EVoucher.Lib
             {
                 return -3;
             }
-            if (BSHelper.IsPhoneNumber(phone))
+            if (!BSHelper.IsPhoneNumber(phone))
             {
                 return -4;
             }
@@ -100,7 +116,7 @@ namespace EVoucher.Lib
 
         public static bool IsPhoneNumber(string number)
         {
-            return Regex.Match(number, @"[\d]").Success;
+            return long.TryParse(number, out long t);
         }
         public async Task<string> PostMessage(string phone, string message)
         {

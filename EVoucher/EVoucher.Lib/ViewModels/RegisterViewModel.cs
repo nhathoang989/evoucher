@@ -19,6 +19,8 @@ namespace EVoucher.Lib.ViewModels
 
         [JsonProperty("id")]
         public int Id { get; set; }
+        [JsonProperty("bid")]
+        public int BId { get; set; }
         [JsonProperty("fullname")]
         public string Fullname { get; set; }
         [Phone]

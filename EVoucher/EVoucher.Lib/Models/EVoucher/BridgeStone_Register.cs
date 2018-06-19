@@ -28,5 +28,6 @@ namespace EVoucher.Lib.Models.EVoucher
         public Nullable<System.DateTime> UpdatedDate { get; set; }
         public Nullable<System.DateTime> SendCodeDate { get; set; }
         public string From { get; set; }
+        public string Bid { get; set; }
     }
 }

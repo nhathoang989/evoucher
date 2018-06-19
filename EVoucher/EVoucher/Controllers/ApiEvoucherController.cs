@@ -378,7 +378,7 @@ namespace EVoucher.Controllers
         {
             List<string> errors = new List<string>();
             int status = BSHelper.ValidateRegister(model?.Phone);
-            if (status ==0)
+            if (status == 0)
             {
                 if (string.IsNullOrEmpty(model.Code))
                 {
@@ -394,7 +394,7 @@ namespace EVoucher.Controllers
                 model.SendCodeStatus = "-1";
                 model.SendCodeDate = DateTime.UtcNow;
                 var register = Mapper.Map<BSRegisterViewModel>(model);
-                register.Status = SWStatus.Preview;                
+                register.Status = SWStatus.Preview;
                 var saveResult = await register.SaveModelAsync();
                 if (saveResult.IsSucceed)
                 {
@@ -426,7 +426,7 @@ namespace EVoucher.Controllers
 
         [HttpGet]
         [Route("register")]
-        public async Task<ApiResponse> Register(string phone, string usr, string pwd)
+        public async Task<ApiResponse> Register(string phone, string usr, string pwd, string bid)
         {
             //var result = await SignInManager.PasswordSignInAsync(usr, pwd,true, shouldLockout: false);\
             if (usr == "vietguys" && pwd == "4BbbQB67")
@@ -436,6 +436,7 @@ namespace EVoucher.Controllers
                 string errorMsg = string.Empty;
                 ApiResponse result = new ApiResponse();
                 result.Status = status;
+                result.Bid = bid;
                 switch (status)
                 {
                     case 0:
@@ -456,7 +457,7 @@ namespace EVoucher.Controllers
                         var saveResult = await register.SaveModelAsync();
                         if (saveResult.IsSucceed)
                         {
-                            register.SendCodeStatus = await BSHelper.SendMessage(status, register.Phone, register.Code);
+                            register.SendCodeStatus = await BSHelper.SendMessage(status, register.Phone, register.Code, bid);
                             result.SendCodeStatus = register.SendCodeStatus;
                             var fields = new List<EntityField>();
                             fields.Add(new EntityField()
@@ -476,7 +477,7 @@ namespace EVoucher.Controllers
                     case -2:
                     case -3:
                     default:
-                        result.SendCodeStatus = await BSHelper.SendMessage(status, phone, string.Empty);
+                        result.SendCodeStatus = await BSHelper.SendMessage(status, phone, string.Empty,bid);
                         return result;
                 }
 
@@ -565,6 +566,8 @@ namespace EVoucher.Controllers
         public int Status { get; set; }
         [JsonProperty("sendCodeStatus")]
         public string SendCodeStatus { get; set; }
+        [JsonProperty("bid")]
+        public string Bid { get; set; }
     }
     public class ImportUsers
     {

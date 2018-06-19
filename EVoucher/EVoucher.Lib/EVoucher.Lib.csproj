@@ -59,6 +59,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\plugins\Swastia.Identity.dll</HintPath>
     </Reference>
+    <Reference Include="Swastika, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\plugins\Swastika.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -155,12 +159,6 @@
       <DependentUpon>EvoucherModel.edmx</DependentUpon>
       <LastGenOutput>EvoucherModel.cs</LastGenOutput>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Swastika\Swastika-Heart\src\Swastika.Framework\Swastika\Swastika.csproj">
-      <Project>{c4fbdca4-d0c6-4815-bff3-1a28738a4517}</Project>
-      <Name>Swastika</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

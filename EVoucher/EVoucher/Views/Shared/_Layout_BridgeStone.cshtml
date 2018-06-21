@@ -65,18 +65,27 @@
             }
         }
     </style>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121069656-1"></script>
+    <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-121069656-1');
+    </script>
 </head>
 <body>
     <div class="container" ng-app="app">
-        <header class="o-1-m o-1-d">            
+        <header class="o-1-m o-1-d">
             <a ng-class="{'active': page == 'page-home' }" class="logo" href="https://www.bridgestone.com.vn/vi">
+                <span>
                     <span>
-                        <span>
-                            <img src="/Content/images/logo.png">
-                        </span>
+                        <img src="/Content/images/logo.png">
                     </span>
-                </a>
-            <a ng-class="{'active': page == 'page-home' }" href="/" >
+                </span>
+            </a>
+            <a ng-class="{'active': page == 'page-home' }" href="/">
                 <span>
                     <span>
                         <img src="/Content/images/icon-1.png">
@@ -84,7 +93,7 @@
                     </span>
                 </span>
             </a>
-            <a  ng-class="{'active': page == 'page-tnc' }" href="/the-le-dieu-kien">
+            <a ng-class="{'active': page == 'page-tnc' }" href="/the-le-dieu-kien">
                 <span>
                     <span>
                         <img src="/Content/images/icon-2.png">
@@ -108,7 +117,7 @@
                 </span>
             </a>
         </header>
-       
+
         @RenderBody()
 
         <footer>
@@ -121,7 +130,7 @@
     @Scripts.Render("/bundles/angular")
     @Scripts.Render("/bundles/be")
 
-    
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

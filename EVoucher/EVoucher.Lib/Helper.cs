@@ -51,6 +51,7 @@ namespace EVoucher.Lib
                     message = $"Bridgestone Viet Nam gui ban ma: {code}. " +
                         $"Ma co gia tri quy doi 01 the xang Flexicard tri gia 300K khi mua 02 lop Turanza GR100 " +
                         $"tai he thong dai ly cua Bridgestone tren toan quoc. Hieu luc den { endDate.ToString("dd/MM/yyyy") }. " +
+                        $"Luu y: moi ma se co gia tri quy doi 02 the xang tuong duong 04 lop. " +
                         $"Hotline: 1900545468";
                     break;
                 case -1:

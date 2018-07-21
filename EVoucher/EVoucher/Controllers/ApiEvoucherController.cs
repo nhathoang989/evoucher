@@ -299,7 +299,7 @@ namespace EVoucher.Controllers
                   r.Status != (int)SWStatus.Deleted &&
                   (
                     (r.Code == request.Key)
-                    || (r.Phone.Contains(phone))
+                    || (!string.IsNullOrEmpty(phone) && r.Phone.Contains(phone))
                    );
             }
             return conditions;

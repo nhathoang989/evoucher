@@ -43,7 +43,7 @@ namespace EVoucher.Lib
         public static string GetMessage(int status, string phone, string code)
         {
             DateTime startDate = new DateTime(2018, 06, 19);
-            DateTime endDate = new DateTime(2018, 07, 20);
+            DateTime endDate = new DateTime(2018, 07, 30);
             string message = string.Empty;
             switch (status)
             {
@@ -105,7 +105,7 @@ namespace EVoucher.Lib
         {
             
             DateTime startDate = new DateTime(2018, 06, 19);
-            DateTime endDate = new DateTime(2018, 07, 20);
+            DateTime endDate = new DateTime(2018, 07, 31);
 
             if (DateTime.Now < startDate)
             {
